@@ -1,0 +1,776 @@
+<!DOCTYPE Html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cart | Mujaddidi Collection</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div class="sub-header">
+<nav>
+    <a href="index.html"><img src="images/Logo.png"></a>
+    <div class="nav-links" id="navLinks">
+        <i class="fa fa-times" onclick="hideMenu()"></i>
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="PRODUCTS.html">PRODUCTS</a></li>
+            <li><a href="About.html">ABOUT</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+            <li><a href="account.html">ACCOUNT</a></li>
+            <li><a href="cart.html">CART</a></li>
+        </ul>
+    </div>
+    <i class="fa fa-bars" onclick="showMenu()"></i>
+</nav>
+<h1>Your Cart</h1>
+</div>
+</section>
+</section>
+</div>
+
+<!------ cart items details --------->
+<div class="small-container" cart-page>
+
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+        <tr>
+            <td>
+                
+            </tr>
+            
+        </table>
+       
+    </div>
+    </div>
+<!-- FAILSAFE INTEGRATED SHIPPING ADDRESS VIEW PANEL WITH 28 STATES ONLY -->
+<div id="integratedShippingFormContainer" style="background: #fff; width: 100%; max-width: 600px; margin: 20px auto; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-top: 4px solid #eba345; font-family: sans-serif;">
+    <h3 style="color: #051532; margin: 0 0 5px 0; font-size: 18px; font-weight: bold;">Delivery & Shipping Information</h3>
+    <p style="color: #666; font-size: 12px; margin-bottom: 20px;">Please complete your destination address before processing the transaction.</p>
+    
+    <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 11px; font-weight: bold; color: #051532; margin-bottom: 4px; text-transform: uppercase;">Recipient Full Name</label>
+        <input type="text" id="directShipName" placeholder="Name of person receiving package" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 14px;">
+    </div>
+    <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 11px; font-weight: bold; color: #051532; margin-bottom: 4px; text-transform: uppercase;">10-Digit Mobile Number</label>
+        <input type="tel" id="directShipPhone" placeholder="Mobile phone contact number" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 14px;">
+    </div>
+    <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 11px; font-weight: bold; color: #051532; margin-bottom: 4px; text-transform: uppercase;">Complete Street Address</label>
+        <input type="text" id="directShipStreet" placeholder="House/Flat number, Building, Street location" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 14px;">
+    </div>
+    <div style="margin-bottom: 5px;">
+        <label style="display: block; font-size: 11px; font-weight: bold; color: #051532; margin-bottom: 4px; text-transform: uppercase;">Area PIN Code</label>
+        <input type="text" id="directShipPin" placeholder="6-digit Area PIN code" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 14px;">
+    </div>
+
+
+     <!-- 1. THE STATE SELECTOR DROP-DOWN BOX -->
+    <div class="form-group">
+        <label style="display: block; font-size: 11px; font-weight: bold; color: #051532; margin-bottom: 4px; text-transform: uppercase;">State / Region</label>
+        <select id="directShipState" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 14px; background: #fff; height: 38px; color: #333;" onchange="populateDistricts()">
+            <option value="">-- Select State --</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Assam">Assam</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Goa">Goa</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Sikkim">Sikkim</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="West Bengal">West Bengal</option>
+        </select>
+    </div>
+
+    <!-- 2. THE DISTRICT SELECTOR DROP-DOWN BOX (LOCKED BY DEFAULT) -->
+    <div class="form-group">
+        <label style="display: block; font-size: 11px; font-weight: bold; color: #051532; margin-bottom: 4px; text-transform: uppercase;">District / City</label>
+        <select id="directShipCity" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 14px; background: #f8f8f8; height: 38px; color: #777;" disabled>
+            <option value="">Choose State First</option>
+        </select>
+    </div>
+
+</div>
+</div>
+    <!-- AUTHENTIC SANDBOX PAYMENT GATEWAY MODAL Overlay -->
+<div id="paymentGatewayModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 21, 50, 0.6); z-index: 9999; justify-content: center; align-items: center; font-family: sans-serif;">
+    <div style="background: #ffffff; width: 100%; max-width: 400px; padding: 25px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); text-align: center; position: relative; margin: 15px;">
+        
+        <!-- Header Brand Zone -->
+        <h3 style="color: #051532; margin: 0 0 5px 0; font-size: 18px; text-transform: uppercase; font-weight: bold;">Secure Payment Portal</h3>
+        <p style="color: #eba345; font-weight: bold; margin: 0 0 20px 0; font-size: 15px;">Amount Payable: <span id="payableAmountLabel">₹0.00</span></p>
+        
+        <!-- Card Processing Form Interface -->
+        <form id="securePaymentForm">
+            <input type="text" placeholder="Cardholder Name" required style="width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+            <input type="text" placeholder="Card Number (16 Digits)" maxlength="16" required style="width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" placeholder="MM/YY" maxlength="5" required style="width: 50%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+                <input type="password" placeholder="CVV" maxlength="3" required style="width: 50%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+            </div>
+            
+            <!-- Dynamic Action Status Buttons -->
+            <button type="submit" id="payNowSubmitBtn" style="width: 100%; background: #eba345; color: #051532; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; transition: 0.2s;">Authorize Payment</button>
+            <button type="button" onclick="closePaymentModal()" style="width: 100%; background: none; border: none; color: #777; margin-top: 12px; cursor: pointer; font-size: 13px;">Cancel Transaction</button>
+        </form>
+
+        <!-- Loading Transaction Animation Layer -->
+        <div id="paymentLoadingOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; border-radius: 8px; flex-direction: column; justify-content: center; align-items: center;">
+            <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #051532; border-radius: 50%; animation: spinLoader 1s linear infinite; margin-bottom: 15px;"></div>
+            <p style="color: #051532; font-weight: bold; font-size: 14px; margin: 0;">Verifying Secure 3D Secure Assets...</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes spinLoader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+
+
+<!---------- footer--------> 
+
+     <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col-1">
+                    <h3>Download Our App</h3>
+                    <p>Download App for Android and ios mobile phone.</p>
+                    <div class="app-logo">
+                        <img src="images/play store.png">
+                        <img src="images/App Store (1).png">
+                    </div>
+                </div>
+                <div class="footer-col-2">
+                    <img src="images/Logo.png">
+                    <p>Our Purpose Is To Sustainably Make The Pleasure And<br>Benefits 
+                        Of Islamic Items To The Many.</p>
+                </div>
+                <div class="footer-col-3">
+                    <h3>Useful Links</h3>
+                    <ul>
+                        <li>Coupons</li>
+                        <li>Blog Post</li>
+                        <li>Return Policy</li>
+                        <li>Join Affiliate</li>
+                    </ul>
+                </div>
+                <div class="footer-col-4">
+                    <h3>Follow Us</h3>
+                    <ul>
+                       <a href="">
+                        <li>Facebook</li></a>
+                       <a href="">
+                        <li>Twitter</li></a>
+                       <a href="https://www.instagram.com/asifkhanattari26?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
+                        <li>Instagram</li></a>
+                       <a href="">
+                        <li>Youtube</li></a>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">Copyright 2020 - Mujaddidi Collection</p>
+        </div>
+     </div>
+</section>
+
+     </div>
+     </body>    
+ </section>
+
+    
+ <!---------JavaScript for Toggle Menu-------> 
+    <script>
+
+        var navLinks = document.getElementById("navLinks");
+
+        function showMenu(){
+            navLinks.style.right = "0";
+        }
+        function hideMenu(){
+            navLinks.style.right = "-200px";
+        }
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Identify the container using your specific attribute or class signatures safely
+    const cartContainer = document.querySelector("[cart-page]") || document.querySelector(".cart-page");
+
+    function displayCartPage() {
+        if (!cartContainer) return;
+
+        // 2. Fetch synchronized item array from your browser memory 
+        let cart = JSON.parse(localStorage.getItem("mujaddidi_cart")) || [];
+
+        // ==========================================
+        // CONFIGURATION A: EMPTY CART STATE UI LAYOUT
+        // ==========================================
+        if (cart.length === 0) {
+            cartContainer.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; font-family: inherit;">
+                    <i class="fa fa-shopping-cart" style="font-size: 70px; color: #051532; margin-bottom: 20px;"></i>
+                    <h2 style="color: #051532; margin-bottom: 10px; font-size: 24px;">Your cart is empty</h2>
+                    <p style="color: #555; margin-bottom: 25px; font-size: 15px;">Add items to your cart to see them here.</p>
+                    <a href="PRODUCTS.html" class="btn" style="
+                        background: #eba345; 
+                        color: #051532; 
+                        padding: 12px 30px; 
+                        text-decoration: none; 
+                        font-weight: bold; 
+                        border-radius: 4px; 
+                        display: inline-block;
+                        transition: all 0.3s ease;
+                        font-size: 15px;
+                        border: 2px solid #eba345;
+                    " onmouseover="this.style.background='#051532'; this.style.color='#ffffff'; this.style.borderColor='#051532';" 
+                       onmouseout="this.style.background='#eba345'; this.style.color='#051532'; this.style.borderColor='#eba345';">
+                        Go back to your shopping
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        // ==========================================
+        // CONFIGURATION B: ACTIVE POPULATED CART LAYOUT
+        // ==========================================
+        let layoutHTML = `
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr style="background: #eba345;">
+                        <th style="text-align: left; padding: 12px; color: #051532; font-weight: bold;">Product</th>
+                        <th style="text-align: center; padding: 12px; color: #051532; font-weight: bold;">Quantity</th>
+                        <th style="text-align: right; padding: 12px; color: #051532; font-weight: bold;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        let totalCartPrice = 0;
+
+        // Loop array values to form valid tabular card elements
+        cart.forEach((item, index) => {
+            const itemSubtotal = item.price * item.quantity;
+            totalCartPrice += itemSubtotal;
+
+            layoutHTML += `
+                <tr>
+                    <td data-label="Product" style="padding: 15px 12px; border-bottom: 1px solid #e0e0e0;">
+                        <div class="cart-info" style="display: flex; align-items: center; flex-wrap: wrap;">
+                            <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px; margin-right: 15px; object-fit: cover; border-radius: 4px;">
+                            <div>
+                                <p style="margin: 0 0 5px 0; font-weight: bold; color: #051532;">${item.name}</p>
+                                <small style="color: #666;">Price: ₹${item.price.toFixed(2)}</small><br>
+                                <a href="#" class="remove-cart-item" data-index="${index}" style="color: #cc0000; font-size: 13px; text-decoration: none; display: inline-block; margin-top: 5px; font-weight: 600;">Remove</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-label="Quantity" style="text-align: center; padding: 15px 12px; border-bottom: 1px solid #e0e0e0;">
+                        <input type="number" value="${item.quantity}" min="1" class="update-qty-input" data-index="${index}" style="width: 50px; height: 35px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-size: 15px;">
+                    </td>
+                    <td data-label="Subtotal" style="text-align: right; padding: 15px 12px; border-bottom: 1px solid #e0e0e0; font-weight: bold; color: #051532;">
+                        ₹${itemSubtotal.toFixed(2)}
+                    </td>
+                </tr>
+            `;
+        });
+
+        layoutHTML += `
+                </tbody>
+            </table>
+
+            <!-- Order Summary Block with your specific brand colors -->
+            <div class="total-price" style="display: flex; justify-content: flex-end; margin-top: 30px; font-family: inherit;">
+                <table style="border-top: 3px solid #eba345; width: 100%; max-width: 400px;">
+                    <tr>
+                        <td style="padding: 12px 10px; border: none; color: #555;">Subtotal</td>
+                        <td style="text-align: right; padding: 12px 10px; border: none; font-weight: bold; color: #051532;">₹${totalCartPrice.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 10px; border: none; color: #555;">Shipping</td>
+                        <td style="text-align: right; padding: 12px 10px; border: none; font-weight: bold; color: green;">Free</td>
+                    </tr>
+                    <tr style="border-top: 1px solid #e0e0e0;">
+                        <td style="padding: 15px 10px; border: none;"><strong>Total Amount</strong></td>
+                        <td style="text-align: right; padding: 15px 10px; border: none; font-weight: bold; color: #051532; font-size: 20px;">₹${totalCartPrice.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding-top: 15px; border: none;">
+                            <button id="checkout-submit-btn" style="
+                                background: #eba345; 
+                                color: #051532; 
+                                border: 2px solid #eba345; 
+                                padding: 14px; 
+                                font-size: 16px; 
+                                font-weight: bold; 
+                                border-radius: 4px; 
+                                cursor: pointer; 
+                                width: 100%; 
+                                transition: all 0.3s ease;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                            ;">
+                                Proceed to Checkout
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        `;
+
+        // Safely overwrite the core container element structure
+        cartContainer.innerHTML = layoutHTML;
+
+        // Bind logical listeners to newly formed node properties
+        bindActiveCartEvents();
+    }
+
+    function bindActiveCartEvents() {
+        let cart = JSON.parse(localStorage.getItem("mujaddidi_cart")) || [];
+
+        // Handle quantity selector adjustments
+        document.querySelectorAll(".update-qty-input").forEach(input => {
+            input.addEventListener("change", function() {
+                const targetIdx = this.getAttribute("data-index");
+                let updatedValue = parseInt(this.value);
+                
+                if (isNaN(updatedValue) || updatedValue < 1) updatedValue = 1;
+                
+                cart[targetIdx].quantity = updatedValue;
+                localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+                displayCartPage(); // Instantly update totals on screen
+            });
+        });
+
+        // Handle item deletion removals
+        document.querySelectorAll(".remove-cart-item").forEach(button => {
+            button.addEventListener("click", function(e) {
+                e.preventDefault();
+                const targetIdx = this.getAttribute("data-index");
+                
+                cart.splice(targetIdx, 1);
+                localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+                displayCartPage(); // Instantly update view
+            });
+        });
+
+        // Handle checkout button actions and transitions
+        const checkoutBtn = document.getElementById("checkout-submit-btn");
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener("mouseover", () => {
+                checkoutBtn.style.background = "#051532";
+                checkoutBtn.style.borderColor = "#051532";
+                checkoutBtn.style.color = "#ffffff";
+            });
+            checkoutBtn.addEventListener("mouseout", () => {
+                checkoutBtn.style.background = "#eba345";
+                checkoutBtn.style.borderColor = "#eba345";
+                checkoutBtn.style.color = "#051532";
+            });
+            checkoutBtn.addEventListener("click", () => {
+                // Checkout process action handler
+                alert("Thank you for your order! Redirecting to checkout processing form...");
+                // Add your checkout URL here, for example: window.location.href = "checkout.html";
+            });
+        }
+    }
+
+    // Initialize layout display setup execution script
+    displayCartPage();
+});
+</script>
+<!-- PART 1: COMPONENT AND CHECKOUT EVENT INITIALIZER -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Locate the checkout button from the DOM layout safely
+    const checkoutBtn = document.querySelector(".checkout-btn") || 
+                        document.getElementById("checkout-submit-btn");
+
+    if (checkoutBtn) {
+        // Clear out any old background event listeners by cloning the button element
+        const freshCheckoutBtn = checkoutBtn.cloneNode(true);
+        checkoutBtn.parentNode.replaceChild(freshCheckoutBtn, checkoutBtn);
+
+        // Bind the new instant-order action to the clean button instance
+        freshCheckoutBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            // 2. Pull products array currently inside the active shopping cart
+            let cart = JSON.parse(localStorage.getItem("mujaddidi_cart")) || [];
+
+            // Boundary Check: Prevent checkout actions if the cart table is empty
+            if (cart.length === 0) {
+                alert("Your cart is empty! Please add products before checking out.");
+                return;
+            }
+            // 3. READ CUSTOM SELECTIONS FROM DYNAMIC DROPDOWNS DIRECTLY
+            const fullName = document.getElementById("directShipName") ? document.getElementById("directShipName").value.trim() : "";
+            const phone = document.getElementById("directShipPhone") ? document.getElementById("directShipPhone").value.trim() : "";
+            const street = document.getElementById("directShipStreet") ? document.getElementById("directShipStreet").value.trim() : "";
+            const state = document.getElementById("directShipState") ? document.getElementById("directShipState").value : ""; 
+            const city = document.getElementById("directShipCity") ? document.getElementById("directShipCity").value : "";   
+            const pinCode = document.getElementById("directShipPin") ? document.getElementById("directShipPin").value.trim() : "";
+
+            // Completeness Validator Gate: Block checkout if input selections are blank
+            if (!fullName || !phone || !street || !state || !city || !pinCode) {
+                alert("Please fill out all delivery address fields and select your State & District.");
+                return;
+            }
+
+            // 4. Identify who is purchasing (Matches active account profile username token)
+            const loggedInUser = localStorage.getItem('activeUserSession') || "Guest";
+
+            // 5. Generate metadata metrics for the transaction records logs
+            const generatedId = Math.floor(100000 + Math.random() * 900000);
+            const dateFormatted = new Date().toLocaleDateString('en-IN', {
+                year: 'numeric', month: 'short', day: 'numeric'
+            });
+
+            // 6. Compute total price figures mathematically
+            let cumulativeTotal = 0;
+            cart.forEach(item => { 
+                cumulativeTotal += parseFloat(item.price) * parseInt(item.quantity); 
+            });
+
+            // Convert items arrays to flat lines for a clean layout view on your Admin panel tables
+            const itemsStringSummary = cart.map(i => `${i.name || i.title || 'Product'} (x${i.quantity || 1})`).join(', ');
+            const completeAddressString = `${fullName}, Ph: ${phone}, ${street}, ${city}, ${state} - ${pinCode}`;
+            // 7. ASSEMBLE THE MASTER INSTANT INVOICE STRUCTURE Payload
+            const orderPayload = {
+                orderId: generatedId,
+                date: dateFormatted,
+                totalPaid: cumulativeTotal,
+                totalAmount: cumulativeTotal, // Safety duplicate variable matching admin dashboards
+                itemsDescription: itemsStringSummary,
+                status: "Processing", // Initial workflow status tracking state
+                items: cart,          
+                customer: {
+                    accountUser: loggedInUser
+                },
+                shippingAddress: completeAddressString
+            };
+
+            // 8. APPEND DATA ROW TO CENTRAL STORAGE QUEUE REPOSITORIES
+            let centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            centralQueue.unshift(orderPayload);
+            localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralQueue));
+
+            // 9. FLUSH ACTIVE SHOPPING CART MEMORY CACHES COMPLETELY
+            localStorage.removeItem("mujaddidi_cart"); 
+
+            // Success feedback alerting notifications loop
+            alert(`🎉 Order placed successfully!\n\nYour Order ID is: #MJD-${generatedId}\nYour items have been moved to your order history.`);
+            
+            // 10. Redirect your customer viewport focus over to their accounts dashboard timeline smoothly
+            window.location.href = "account.html";
+        });
+    }
+});
+</script>
+
+<script>
+// A structured list of all real districts belonging to each state
+const districtDatabase = {
+    "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Nellore", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"],
+    "Arunachal Pradesh": ["Tawang", "West Kameng", "East Kameng", "Papum Pare", "Kurung Kumey", "Kra Daadi", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang", "Siang", "Upper Siang", "Lower Siang", "Dibang Valley", "Lower Dibang Valley", "Lohit", "Anjaw", "Changlang", "Tirap", "Longding", "Namsai", "Kamle"],
+    "Assam": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup Metropolitan", "Kamrup Rural", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", "West Karbi Anglong"],
+    "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
+    "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Janjgir-Champa", "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Koriya", "Mahasamund", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja", "Gaurela-Pendra-Marwahi"],
+    "Goa": ["North Goa", "South Goa"],
+    "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udepur", "Dahod", "Dang", "Devbhumi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
+    "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
+    "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"],
+    "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahibganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"],
+    "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikkaballapur", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayapura", "Yadgir", "Vijayanagara"],
+    "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Wayand", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur"],
+    "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", "Neemuch", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha", "Niwari"],
+    "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
+    "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Senapati", "Tamenglong", "Thoubal", "Ukhrul", "Kangpokpi", "Tengnoupal", "Pherzawl", "Noney", "Kamjong", "Jiribam", "Kakching"],
+    "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"],
+    "Mizoram": ["Aizawl", "Champhai", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Serchhip", "Hnahthial", "Khawzawl", "Saitual"],
+    "Nagaland": ["Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto", "Noklak", "Chümoukedima", "Tseminyü", "Niuland"],
+    "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbanb", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Sonepur", "Sundargarh"],
+    "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Muktsar", "Pathankot", "Patiala", "Rupnagar", "Sahibzada Ajit Singh Nagar", "Sangrur", "Shahid Bhagat Singh Nagar", "Tarn Taran", "Malerkotla"],
+    "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"],
+    "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
+    "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
+    "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Kumuram Bheem", "Mahabubabad", "Mahabubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Rangareddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"],
+    "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"],
+    "Uttar Pradesh": ["Agra", "Aligarh", "Allahabad", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Faizabad", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "RaeBareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
+    "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
+    "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"]
+};
+function populateDistricts() {
+    const stateSelect = document.getElementById("directShipState");
+    const citySelect = document.getElementById("directShipCity");
+    const selectedState = stateSelect.value;
+
+    // Reset the District dropdown entirely
+    citySelect.innerHTML = "";
+
+    // CASE A: User has cleared selection or picked blank option
+    if (selectedState === "") {
+        citySelect.innerHTML = '<option value="">Choose State First</option>';
+        citySelect.disabled = true;
+        citySelect.style.background = "#f8f8f8";
+        citySelect.style.color = "#777";
+    } 
+    // CASE B: User has picked an actual state from the list
+    else {
+        citySelect.disabled = false;
+        citySelect.style.background = "#fff";
+        citySelect.style.color = "#333";
+
+        // Inject the default prompt option row first
+        let defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "-- Select District --";
+        citySelect.appendChild(defaultOption);
+
+        // Fetch corresponding items and generate option tags
+        const districts = districtDatabase[selectedState] || [];
+        districts.forEach(function(district) {
+            let option = document.createElement("option");
+            option.value = district;
+            option.textContent = district;
+            citySelect.appendChild(option);
+        });
+    }
+}
+</script>
+<!-- PART 1: ACCOUNT DETECTION AND CART AUTOFILL -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Check if a user has an active logged-in session
+    const currentActiveUser = localStorage.getItem('activeUserSession');
+    if (!currentActiveUser) return; // Exit if it is a guest or no one is logged in
+
+    const userKey = currentActiveUser.toLowerCase().trim();
+
+    // 2. RUN THIS ONLY IF ON THE CART PAGE (Checks if the Name field is visible)
+    const cartFormName = document.getElementById("directShipName");
+    if (cartFormName) {
+        // Fetch the addresses master database object
+        const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+        const savedData = addressBook[userKey];
+
+        // If an address is found for this account, fill out the form fields
+        if (savedData) {
+            document.getElementById("directShipName").value = savedData.fullName || "";
+            document.getElementById("directShipPhone").value = savedData.phone || "";
+            document.getElementById("directShipStreet").value = savedData.street || "";
+            
+            const stateDropdown = document.getElementById("directShipState");
+            if (stateDropdown) {
+                stateDropdown.value = savedData.state || "";
+                // Build the matching district choices automatically
+                if (typeof populateDistricts === "function") { 
+                    populateDistricts(); 
+                }
+                
+                // Small delay to let the dynamic district list finish loading
+                setTimeout(function() {
+                    const cityDropdown = document.getElementById("directShipCity");
+                    if (cityDropdown) cityDropdown.value = savedData.city || "";
+                }, 100);
+            }
+            document.getElementById("directShipPin").value = savedData.pinCode || "";
+        }
+
+        // Listen for Checkout clicks to save any new changes to their address
+        const checkoutBtn = document.querySelector(".checkout-btn") || document.getElementById("checkout-submit-btn");
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener("click", function() {
+                const fullName = document.getElementById("directShipName").value.trim();
+                const phone = document.getElementById("directShipPhone").value.trim();
+                const street = document.getElementById("directShipStreet").value.trim();
+                const city = document.getElementById("directShipCity").value;
+                const state = document.getElementById("directShipState").value;
+                const pinCode = document.getElementById("directShipPin").value.trim();
+
+                if (fullName && phone && street && city && state && pinCode) {
+                    const freshAddressPayload = {
+                        fullName: fullName, phone: phone, street: street,
+                        city: city, state: state, pinCode: pinCode
+                    };
+                    let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+                    addressBook[userKey] = freshAddressPayload;
+                    localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+                }
+            });
+        }
+    }
+    // 3. RUN THIS ONLY IF ON THE ACCOUNT / PROFILE DASHBOARD PAGE
+    const profileDashboard = document.getElementById("orderHistoryContainer") || document.querySelector(".form-container");
+    if (profileDashboard && !document.getElementById("accountAddressCard")) {
+        
+        // Define the clean HTML Card container structure matching your theme
+        const addressCardHTML = `
+            <div id="accountAddressCard" style="background: #fff; width: 100%; max-width: 450px; margin: 25px auto; padding: 25px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #051532; font-family: sans-serif; text-align: left;">
+                <h3 style="color: #051532; margin: 0 0 15px 0; font-size: 15px; font-weight: bold; border-bottom: 2px solid #f4f6f9; padding-bottom: 8px;">
+                    <i class="fa fa-map-marker" style="color: #eba345; margin-right: 5px;"></i> Saved Delivery Address
+                </h3>
+                
+                <!-- Display Text View -->
+                <div id="addressDisplayView">
+                    <p id="displayAddressText" style="color: #666; font-size: 13px; line-height: 1.6; margin-bottom: 15px; font-style: italic;">No shipping address saved yet.</p>
+                    <button id="editAddressButton" style="background: #eba345; color: #051532; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Edit Address</button>
+                </div>
+
+                <!-- Hidden Input Form View -->
+                <div id="addressEditView" style="display: none;">
+                    <form id="accountAddressForm">
+                        <input type="text" id="accShipName" placeholder="Full Name" required style="width:100%; padding:9px; margin-bottom:8px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                        <input type="tel" id="accShipPhone" placeholder="Mobile Number" required style="width:100%; padding:9px; margin-bottom:8px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                        <input type="text" id="accShipStreet" placeholder="Complete Street Address" required style="width:100%; padding:9px; margin-bottom:8px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+                            <input type="text" id="accShipCity" placeholder="City / District" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                            <input type="text" id="accShipState" placeholder="State" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                        </div>
+                        <input type="text" id="accShipPin" placeholder="PIN Code" required style="width:100%; padding:9px; margin-bottom:12px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                        <div style="display: flex; gap: 8px;">
+                            <button type="submit" style="background: #051532; color: #fff; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Save</button>
+                            <button type="button" id="cancelAddressButton" style="background: #eee; color: #333; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>`;
+
+        // Inject the address panel box layout directly on the screen
+        profileDashboard.insertAdjacentHTML('afterend', addressCardHTML);
+        // Sub-function to print the clean address text strings on screen
+        const refreshDisplayView = function() {
+            const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            const saved = addressBook[userKey];
+            const textBlock = document.getElementById("displayAddressText");
+
+            if (saved && textBlock) {
+                textBlock.innerHTML = `<strong>${saved.fullName}</strong><br>${saved.street}, ${saved.city}, ${saved.state}<br>PIN Code: <strong>${saved.pinCode}</strong><br>Phone: ${saved.phone}`;
+                textBlock.style.fontStyle = "normal";
+            }
+        };
+        refreshDisplayView();
+
+        // Handle opening the edit form window
+        document.getElementById("editAddressButton").addEventListener("click", function() {
+            document.getElementById("addressDisplayView").style.display = "none";
+            document.getElementById("addressEditView").style.display = "block";
+
+            const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            const saved = addressBook[userKey] || {};
+
+            document.getElementById("accShipName").value = saved.fullName || "";
+            document.getElementById("accShipPhone").value = saved.phone || "";
+            document.getElementById("accShipStreet").value = saved.street || "";
+            document.getElementById("accShipCity").value = saved.city || "";
+            document.getElementById("accShipState").value = saved.state || "";
+            document.getElementById("accShipPin").value = saved.pinCode || "";
+        });
+
+        // Handle clicking the cancel button
+        document.getElementById("cancelAddressButton").addEventListener("click", function() {
+            document.getElementById("addressDisplayView").style.display = "block";
+            document.getElementById("addressEditView").style.display = "none";
+        });
+
+        // Handle submitting the address update form
+        document.getElementById("accountAddressForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const freshDataData = {
+                fullName: document.getElementById("accShipName").value.trim(),
+                phone: document.getElementById("accShipPhone").value.trim(),
+                street: document.getElementById("accShipStreet").value.trim(),
+                city: document.getElementById("accShipCity").value.trim(),
+                state: document.getElementById("accShipState").value.trim(),
+                pinCode: document.getElementById("accShipPin").value.trim()
+            };
+
+            let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            addressBook[userKey] = freshDataData;
+            localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+
+            alert("Address saved successfully!");
+            document.getElementById("addressDisplayView").style.display = "block";
+            document.getElementById("addressEditView").style.display = "none";
+            refreshDisplayView();
+        });
+    }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const loggedInUser = localStorage.getItem('activeUserSession');
+    if (!loggedInUser) return; // Terminate tracking sequence for Guests [regForm]
+
+    const userKey = loggedInUser.toLowerCase().trim();
+    const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+    const addressesList = addressBook[userKey] || [];
+
+    // Search specifically for an item where the primary default selection parameter is active
+    const defaultAddress = addressesList.find(addr => addr.isDefault === true) || addressesList[0];
+
+    if (defaultAddress) {
+        // Safely complete visible address line properties automatically
+        const nameField = document.getElementById("directShipName");
+        const phoneField = document.getElementById("directShipPhone");
+        const streetField = document.getElementById("directShipStreet");
+        const pinField = document.getElementById("directShipPin");
+
+        if (nameField) nameField.value = defaultAddress.fullName || "";
+        if (phoneField) phoneField.value = defaultAddress.phone || "";
+        if (streetField) streetField.value = defaultAddress.street || "";
+        if (pinField) pinField.value = defaultAddress.pinCode || "";
+
+        // Trigger your State selection framework mapping triggers safely
+        const stateDropdown = document.getElementById("directShipState");
+        if (stateDropdown) {
+            stateDropdown.value = defaultAddress.state || "";
+            
+            // Execute any dynamic district loading switchboards if active
+            if (typeof populateDistricts === "function") {
+                populateDistricts();
+            }
+
+            // Short timeout delay transition wrapper to secure values inside dynamic selectors
+            setTimeout(() => {
+                const cityDropdown = document.getElementById("directShipCity");
+                if (cityDropdown) cityDropdown.value = defaultAddress.city || "";
+            }, 100);
+        }
+    }
+});
+</script>
+
+
+</body>
+</html>

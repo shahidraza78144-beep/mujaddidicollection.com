@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mujaddidi Collection - Admin Dashboard</title>
+    <!-- External FontAwesome icons library -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #f4f6f9; color: #333; }
+        
+        /* 1. Auth Guard View Overlays */
+        #adminAuthGate { display: flex; position: fixed; inset: 0; background: #051532; z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
+        .auth-card { background: #fff; width: 100%; max-width: 400px; padding: 40px 30px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; border-top: 5px solid #eba345; }
+        .auth-card i { font-size: 50px; color: #051532; margin-bottom: 15px; }
+        .auth-card h2 { color: #051532; margin-bottom: 25px; font-size: 22px; }
+        .auth-card input { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none; }
+        .auth-card input:focus { border-color: #eba345; }
+        .auth-card button { width: 100%; background: #051532; color: #fff; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .auth-card button:hover { background: #eba345; color: #051532; }
+        .auth-error { color: #dc2626; font-size: 13px; margin-top: 10px; display: none; font-weight: 500; }
+
+        /* 2. Main Dashboard Component Frames (Hidden on Boot) */
+        #adminDashboardContent { display: none; }
+        header { background: #051532; color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #eba345; }
+        header h1 { font-size: 22px; letter-spacing: 1px; }
+        header span { color: #eba345; font-weight: bold; }
+        .header-actions { display: flex; gap: 10px; }
+        .refresh-btn { background: #eba345; color: #051532; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .logout-btn { background: #dc2626; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        
+        /* 3. Tables & Counter Cards styling grids */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: #fff; padding: 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 20px; border-left: 5px solid #051532; }
+        .stat-card.orders-card { border-left-color: #eba345; }
+        .stat-card i { font-size: 40px; color: #051532; }
+        .stat-card.orders-card i { color: #eba345; }
+        .stat-info h3 { font-size: 14px; color: #777; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-info p { font-size: 28px; font-weight: bold; color: #051532; }
+        .dashboard-section { background: #fff; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px; overflow: hidden; }
+        .section-header { background: #051532; color: #fff; padding: 15px 20px; font-size: 16px; font-weight: bold; border-bottom: 3px solid #eba345; display: flex; align-items: center; gap: 10px; }
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
+        th, td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid #eee; }
+        th { background: #f8fafc; color: #051532; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        tr:hover { background: #fdfaf4; }
+        .badge { display: inline-block; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; text-transform: uppercase; }
+        .badge-user { background: #e0f2fe; color: #0369a1; }
+        .empty-message { padding: 30px; text-align: center; color: #999; font-style: italic; }
+    </style>
+</head>
+<body>
+    <!-- 1. ADMINISTRATIVE VERIFICATION LOCK SCREEN BOX -->
+    <div id="adminAuthGate">
+        <div class="auth-card">
+            <i class="fa fa-lock"></i>
+            <h2>Mujaddidi Admin Access</h2>
+            <form id="adminLoginForm">
+                <input type="password" id="adminPasswordInput" placeholder="Enter Admin Security Key" required autocomplete="current-password">
+                <button type="submit">Verify Gateway Key</button>
+            </form>
+            <div id="authErrorMessage" class="auth-error">Invalid Security Key! Access Denied.</div>
+        </div>
+    </div>
+    <!-- 2. DATA WORKSPACE VIEWPANELS -->
+    <div id="adminDashboardContent">
+        <header>
+            <h1>Mujaddidi Collection <span>Panel Dashboard</span></h1>
+            <div class="header-actions">
+                <button class="refresh-btn" onclick="loadDashboardData()">
+                    <i class="fa fa-refresh"></i> Refresh
+                </button>
+                <button class="logout-btn" onclick="terminateAdminSession()">
+                    <i class="fa fa-sign-out"></i> Exit Panel
+                </button>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Counter Analytics Summary Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa fa-users"></i>
+                    <div class="stat-info">
+                        <h3>Registered Customers</h3>
+                        <p id="totalUsersCount">0</p>
+                    </div>
+                </div>
+                <div class="stat-card orders-card">
+                    <i class="fa fa-shopping-basket"></i>
+                    <div class="stat-info">
+                        <h3>Total Global Orders</h3>
+                        <p id="totalOrdersCount">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer User Account Profiles Table Registry Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <i class="fa fa-address-book"></i> Registered Accounts Data
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Account Username</th>
+                                <th>Email Address</th>
+                                <th>Security Verification Password</th>
+                                <th>Account Designation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Global Master Orders Table Tracking Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <i class="fa fa-truck"></i> Live Database Order Tracking Queue
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order Identifier ID</th>
+                                <th>Target Customer Account</th>
+                                <th>Purchased Items Detail</th>
+                                <th>Financial Summary Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+                <script>
+        // FIXED: The true cryptographic hash for "MujaddidiCollection@Asifkhan"
+        const SECURE_HASH_TARGET = "11c86fb081c81d73b6d9f1769daede9efe47adc32aea6b586d9cc981f3a0f483";
+
+        // Cryptographic parser helper converting string values into encrypted signatures
+        async function calculateSHA256(string) {
+            const encoderText = new TextEncoder().encode(string);
+            const dataBuffer = await crypto.subtle.digest('SHA-256', encoderText);
+            return Array.from(new Uint8Array(dataBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Intercept validation actions submitted inside form
+        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Strips out any accidental spaces at the beginning or end
+            const inputRaw = document.getElementById('adminPasswordInput').value.trim();
+            const hashedAttempt = await calculateSHA256(inputRaw);
+
+            if (hashedAttempt === SECURE_HASH_TARGET) {
+                sessionStorage.setItem('adminSessionActive', 'true');
+                grantAccess();
+            } else {
+                document.getElementById('authErrorMessage').style.display = 'block';
+                document.getElementById('adminPasswordInput').value = '';
+            }
+        });
+
+        // Show/hide screen blocks depending on authorization status
+        function grantAccess() {
+            document.getElementById('adminAuthGate').style.display = 'none';
+            document.getElementById('adminDashboardContent').style.display = 'block';
+            loadDashboardData();
+        }
+
+        function terminateAdminSession() {
+            sessionStorage.removeItem('adminSessionActive');
+            window.location.reload();
+        }
+
+        // Engine tracking parsing routines targeting client localStorage metrics
+        function loadDashboardData() {
+            const registeredUsersList = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
+            const centralOrdersQueueList = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+
+            document.getElementById('totalUsersCount').textContent = registeredUsersList.length;
+            document.getElementById('totalOrdersCount').textContent = centralOrdersQueueList.length;
+
+            const usersTableBody = document.getElementById('usersTableBody');
+            if (registeredUsersList.length === 0) {
+                usersTableBody.innerHTML = `<tr><td colspan="4" class="empty-message">No user accounts found in storage record database.</td></tr>`;
+            } else {
+                usersTableBody.innerHTML = registeredUsersList.map(user => `
+                    <tr>
+                        <td style="font-weight:600; text-transform: capitalize; color:#051532;">${escapeHTML(user.username)}</td>
+                        <td>${escapeHTML(user.email)}</td>
+                        <td style="font-family: monospace; color:#666;">${escapeHTML(user.password)}</td>
+                        <td><span class="badge badge-user">Customer</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            const ordersTableBody = document.getElementById('ordersTableBody');
+            if (centralOrdersQueueList.length === 0) {
+                ordersTableBody.innerHTML = `<tr><td colspan="4" class="empty-message">No live orders currently sitting inside system logs.</td></tr>`;
+            } else {
+                ordersTableBody.innerHTML = centralOrdersQueueList.map((order, index) => {
+                    const customerReferenceName = (order.customer && order.customer.accountUser) ? order.customer.accountUser : 'Guest/Anonymous';
+                    
+                    // 1. ORDER ID SCANNER
+                    const trackingOrderId = order.id || order.orderId || order.orderNumber || order.invoiceNo || `REC-${1000 + index}`;
+
+                    // 2. PRODUCTS DESCRIPTION GENERATOR
+                    let targetItemsSummary = "Items Data Missing";
+                    let itemsArray = order.items || order.cart || [];
+                    
+                    if (order.itemsDescription) {
+                        targetItemsSummary = order.itemsDescription;
+                    } else if (Array.isArray(itemsArray) && itemsArray.length > 0) {
+                        targetItemsSummary = itemsArray.map(item => `${item.name || item.title || 'Product'} (x${item.quantity || 1})`).join(', ');
+                    } else if (typeof order.items === 'string') {
+                        targetItemsSummary = order.items;
+                    }
+
+                    // 3. SMART AUTO-CALCULATING FINANCIAL SUMMARY ENGINE (UPDATED FOR INR)
+                    let finalPrice = 0;
+                    
+                    // Route A: Try to find a direct price property tag first
+                    const directPrice = order.totalAmount || order.totalPrice || order.total || order.grandTotal || order.price || order.subtotal;
+                    
+                    if (directPrice && parseFloat(directPrice) > 0) {
+                        finalPrice = String(directPrice).replace(/[^\d.]/g, '');
+                    } 
+                    // Route B BACKUP: Calculate dynamically from item list array
+                    else if (Array.isArray(itemsArray) && itemsArray.length > 0) {
+                        itemsArray.forEach(item => {
+                            const itemPriceRaw = item.price || item.rate || item.cost || 0;
+                            const cleanedItemPrice = parseFloat(String(itemPriceRaw).replace(/[^\d.]/g, '')) || 0;
+                            const itemQuantity = parseInt(item.quantity || item.qty || 1, 10);
+                            
+                            finalPrice += (cleanedItemPrice * itemQuantity);
+                        });
+                    }
+
+                    // Format output neatly to 2 decimal places with the INR label
+                    const formattedTotal = parseFloat(finalPrice).toFixed(2);
+                    const targetPriceAmount = `INR ${formattedTotal}`;
+
+                    return `
+                        <tr>
+                            <td style="font-family: monospace; font-weight: bold; color:#eba345;">#${escapeHTML(String(trackingOrderId))}</td>
+                            <td style="text-transform: capitalize; font-weight:600;">${escapeHTML(customerReferenceName)}</td>
+                            <td>${escapeHTML(targetItemsSummary)}</td>
+                            <td style="font-weight: bold; color: #051532;">${escapeHTML(String(targetPriceAmount))}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Security escaping utility to strip unauthorized raw user code strings
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        // Run validation check immediately upon document parsing lifecycle end
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('adminSessionActive') === 'true') {
+                grantAccess();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
