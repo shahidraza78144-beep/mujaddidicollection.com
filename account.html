@@ -1,229 +1,268 @@
 <!DOCTYPE Html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Account | Mujaddidi Collection</title>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account | Mujaddidi Collection</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    </head>
-    <body>
-        <div class="sub-header">
-<nav>
-    <a href="index.html"><img src="images/Logo.png"></a>
-    <div class="nav-links" id="navLinks">
-        <i class="fa fa-times" onclick="hideMenu()"></i>
-        <ul>
-            <li><a href="index.html">HOME</a></li>
-            <li><a href="PRODUCTS.html">PRODUCTS</a></li>
-            <li><a href="About.html">ABOUT</a></li>
-            <li><a href="contact.html">CONTACT</a></li>
-            <li><a href="account.html">ACCOUNT</a></li>
-            <li><a href="cart.html">CART</a></li>
-        </ul>
-    </div>
-    <i class="fa fa-bars" onclick="showMenu()"></i>
-</nav>
-<h1>Account</h1>
-</div>
-</section>
-</section>
-</div>
-</div>
+    <link rel="icon" type="image/png" href="images/Logo resized blue lg.png">
+</head>
 
-<!------------ account-page------------>
-
-<div class="account-page">
-    <div class="container">
-        <div class="row">
-            <div class="col-2">
-                <img src="images/Logo resized blue.png" width="100%">
+<body>
+    <div class="sub-header">
+        <nav>
+            <a href="index.html"><img src="images/Logo.png"></a>
+            <div class="nav-links" id="navLinks">
+                <i class="fa fa-times" onclick="hideMenu()"></i>
+                <ul>
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="PRODUCTS.html">PRODUCTS</a></li>
+                    <li><a href="About.html">ABOUT</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="account.html">ACCOUNT</a></li>
+                    <li><a href="cart.html">CART</a></li>
+                </ul>
             </div>
+            <i class="fa fa-bars" onclick="showMenu()"></i>
+        </nav>
+        <h1>Account</h1>
+    </div>
+    </section>
+    </section>
+    </div>
+    </div>
 
-            <div class="col-2">
-                <div class="form-container">
-                    <div class="form-btn">
-                        <span onclick="login()">Login</span>
-                        <span onclick="register()">Register</span>
-                        <hr id="Indicator">
+    <!------------ account-page------------>
+
+    <div class="account-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-2">
+                    <img src="images/Logo resized blue.png" width="100%">
+                </div>
+
+                <div class="col-2">
+                    <div class="form-container">
+                        <div class="form-btn">
+                            <span onclick="login()">Login</span>
+                            <span onclick="register()">Register</span>
+                            <hr id="Indicator">
+                        </div>
+
+                        <form id="LoginForm">
+                            <input type="text" name="username" placeholder="Username">
+                            <input type="password" name="password" placeholder="Password">
+                            <button type="submit" class="btn">Login</button>
+                            <a href="">Forgot Your Password?</a><br>
+                            <a href="">Don't have an account? Register</a>
+                        </form>
+
+                        <form id="RegForm">
+                            <input type="text" name="username" placeholder="Username">
+                            <input type="email" name="email" placeholder="Email">
+                            <input type="password" name="password" placeholder="Password">
+                            <button type="submit" class="btn">Register</button>
+                        </form>
                     </div>
-
-                    <form id="LoginForm">
-                        <input type="text" name="username" placeholder="Username">
-                        <input type="password" name="password" placeholder="Password">
-                        <button type="submit" class="btn">Login</button>
-                        <a href="">Forgot Your Password?</a><br>
-                        <a href="">Don't have an account? Register</a>
-                    </form>
-
-                    <form id="RegForm">
-                        <input type="text" name="username" placeholder="Username">
-                        <input type="email" name="email" placeholder="Email">
-                        <input type="password" name="password" placeholder="Password">
-                        <button type="submit" class="btn">Register</button>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- SECURE MULTI-ADDRESS BOOK MANAGEMENT SYSTEM (FIXED LAYOUT WRAPPER) -->
-<div id="accountAddressCard" style="background: #fff; width: 100%; max-width: 480px; margin: 25px auto; padding: 25px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #051532; font-family: sans-serif; text-align: left; display: block; clear: both;">
-    
-    <!-- Header title themed with a functional + icon anchor button -->
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f6f9; padding-bottom: 10px; margin-bottom: 15px;">
-        <h3 style="color: #051532; margin: 0; font-size: 15px; font-weight: bold;">
-            <i class="fa fa-map-marker" style="color: #eba345; margin-right: 5px;"></i> Address Book Directory
+    <!-- SECURE MULTI-ADDRESS BOOK MANAGEMENT SYSTEM (FIXED LAYOUT WRAPPER) -->
+    <div id="accountAddressCard"
+        style="background: #fff; width: 100%; max-width: 480px; margin: 25px auto; padding: 25px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #051532; font-family: sans-serif; text-align: left; display: block; clear: both;">
+
+        <!-- Header title themed with a functional + icon anchor button -->
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f6f9; padding-bottom: 10px; margin-bottom: 15px;">
+            <h3 style="color: #051532; margin: 0; font-size: 15px; font-weight: bold;">
+                <i class="fa fa-map-marker" style="color: #eba345; margin-right: 5px;"></i> Address Book Directory
+            </h3>
+            <button type="button" id="addNewAddressBtn" title="Add New Address"
+                style="background: #051532; color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">+</button>
+        </div>
+
+        <!-- MAIN INTERACTIVE DISPLAY LIST VIEWER CONTAINER -->
+        <div id="addressBookListViewer">
+            <!-- Saved address blocks will inject here dynamically via script -->
+        </div>
+
+        <!-- INLINE ADD / EDIT MANAGEMENT VIEW PANEL -->
+        <div id="addressFormModalView"
+            style="display: none; background: #fafafa; padding: 15px; border-radius: 6px; border: 1px solid #eee; margin-top: 15px;">
+            <h4 id="formActionTitle"
+                style="margin: 0 0 12px 0; font-size: 13px; color: #051532; text-transform: uppercase; font-weight: bold;">
+                Add New Address</h4>
+
+            <form id="accountAddressForm">
+                <!-- Hidden tracker index targeting active array edits -->
+                <input type="hidden" id="editingAddressIndex" value="">
+
+                <div style="margin-bottom: 8px;">
+                    <input type="text" id="accShipName" placeholder="Recipient Full Name" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <input type="tel" id="accShipPhone" placeholder="10-Digit Mobile Number" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <input type="text" id="accShipStreet" placeholder="Flat/House no., Building, Complete Street"
+                        required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
+                </div>
+
+                <!-- DYNAMIC STATE & DISTRICT SELECTORS FOR ACCOUNT PAGE -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+                    <div>
+                        <select id="accShipState"
+                            style="width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 13px; background: #fff; height: 38px; color: #333; box-sizing: border-box;"
+                            onchange="populateAccountDistricts()">
+                            <option value="">-- State --</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="accShipCity"
+                            style="width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 13px; background: #f8f8f8; height: 38px; color: #777; box-sizing: border-box;"
+                            disabled>
+                            <option value="">Choose State First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <input type="text" id="accShipPin" placeholder="6-Digit PIN Code" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit"
+                        style="background: #051532; color: #fff; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Save
+                        Address</button>
+                    <button type="button" id="cancelAddressFormBtn"
+                        style="background: #eee; color: #333; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div> <!-- ALL CONTAINERS ARE CLOSED CLEANLY HERE -->
+
+
+    <!-- ACCOUNT DASHBOARD PERMANENT ADDRESS WORKSPACE -->
+    <div id="accountAddressCard"
+        style="background: #fff; width: 100%; max-width: 450px; margin: 25px auto; padding: 25px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #051532; font-family: sans-serif; text-align: left;">
+
+        <!-- Header title themed to match your website styling parameters -->
+        <h3
+            style="color: #051532; margin: 0 0 15px 0; font-size: 15px; font-weight: bold; border-bottom: 2px solid #f4f6f9; padding-bottom: 8px;">
+            <i class="fa fa-map-marker" style="color: #eba345; margin-right: 5px;"></i> Permanent Shipping Profile
         </h3>
-        <button type="button" id="addNewAddressBtn" title="Add New Address" style="background: #051532; color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">+</button>
-    </div>
-    
-    <!-- MAIN INTERACTIVE DISPLAY LIST VIEWER CONTAINER -->
-    <div id="addressBookListViewer">
-        <!-- Saved address blocks will inject here dynamically via script -->
-    </div>
 
-    <!-- INLINE ADD / EDIT MANAGEMENT VIEW PANEL -->
-    <div id="addressFormModalView" style="display: none; background: #fafafa; padding: 15px; border-radius: 6px; border: 1px solid #eee; margin-top: 15px;">
-        <h4 id="formActionTitle" style="margin: 0 0 12px 0; font-size: 13px; color: #051532; text-transform: uppercase; font-weight: bold;">Add New Address</h4>
-        
-        <form id="accountAddressForm">
-            <!-- Hidden tracker index targeting active array edits -->
-            <input type="hidden" id="editingAddressIndex" value="">
-            
-            <div style="margin-bottom: 8px;">
-                <input type="text" id="accShipName" placeholder="Recipient Full Name" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
-            </div>
-            <div style="margin-bottom: 8px;">
-                <input type="tel" id="accShipPhone" placeholder="10-Digit Mobile Number" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
-            </div>
-            <div style="margin-bottom: 8px;">
-                <input type="text" id="accShipStreet" placeholder="Flat/House no., Building, Complete Street" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
-            </div>
+        <!-- MODULE A: STANDARD VIEWER (Visible by default) -->
+        <div id="addressDisplayView">
+            <p id="displayAddressText"
+                style="color: #666; font-size: 13px; line-height: 1.6; margin-bottom: 15px; font-style: italic;">No
+                shipping address saved yet.</p>
+            <button id="editAddressButton"
+                style="background: #eba345; color: #051532; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Edit
+                Saved Address</button>
+        </div>
 
-            <!-- DYNAMIC STATE & DISTRICT SELECTORS FOR ACCOUNT PAGE -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
-                <div>
-                    <select id="accShipState" style="width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 13px; background: #fff; height: 38px; color: #333; box-sizing: border-box;" onchange="populateAccountDistricts()">
-                        <option value="">-- State --</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                        <option value="Assam">Assam</option>
-                        <option value="Bihar">Bihar</option>
-                        <option value="Chhattisgarh">Chhattisgarh</option>
-                        <option value="Goa">Goa</option>
-                        <option value="Gujarat">Gujarat</option>
-                        <option value="Haryana">Haryana</option>
-                        <option value="Himachal Pradesh">Himachal Pradesh</option>
-                        <option value="Jharkhand">Jharkhand</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Kerala">Kerala</option>
-                        <option value="Madhya Pradesh">Madhya Pradesh</option>
-                        <option value="Maharashtra">Maharashtra</option>
-                        <option value="Manipur">Manipur</option>
-                        <option value="Meghalaya">Meghalaya</option>
-                        <option value="Mizoram">Mizoram</option>
-                        <option value="Nagaland">Nagaland</option>
-                        <option value="Odisha">Odisha</option>
-                        <option value="Punjab">Punjab</option>
-                        <option value="Rajasthan">Rajasthan</option>
-                        <option value="Sikkim">Sikkim</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
-                        <option value="Telangana">Telangana</option>
-                        <option value="Tripura">Tripura</option>
-                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                        <option value="Uttarakhand">Uttarakhand</option>
-                        <option value="West Bengal">West Bengal</option>
-                    </select>
+        <!-- MODULE B: INTERACTIVE EDITING PANEL (Hidden by default) -->
+        <div id="addressEditView" style="display: none;">
+            <form id="accountAddressForm">
+                <div style="margin-bottom: 8px;">
+                    <input type="text" id="accShipName" placeholder="Recipient Full Name" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
                 </div>
-                <div>
-                    <select id="accShipCity" style="width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 4px; outline: none; font-size: 13px; background: #f8f8f8; height: 38px; color: #777; box-sizing: border-box;" disabled>
-                        <option value="">Choose State First</option>
-                    </select>
+                <div style="margin-bottom: 8px;">
+                    <input type="tel" id="accShipPhone" placeholder="10-Digit Mobile Number" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
                 </div>
-            </div>
+                <div style="margin-bottom: 8px;">
+                    <input type="text" id="accShipStreet" placeholder="Flat/House no., Building, Complete Street"
+                        required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                </div>
 
-            <div style="margin-bottom: 12px;">
-                <input type="text" id="accShipPin" placeholder="6-Digit PIN Code" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none; box-sizing: border-box;">
-            </div>
-            
-            <div style="display: flex; gap: 8px;">
-                <button type="submit" style="background: #051532; color: #fff; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Save Address</button>
-                <button type="button" id="cancelAddressFormBtn" style="background: #eee; color: #333; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Cancel</button>
-            </div>
-        </form>
+                <!-- City & State horizontal split row fields -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+                    <input type="text" id="accShipCity" placeholder="City / District" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                    <input type="text" id="accShipState" placeholder="State Name" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <input type="text" id="accShipPin" placeholder="6-Digit PIN Code" required
+                        style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
+                </div>
+
+                <!-- Form interaction submission control rows -->
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit"
+                        style="background: #051532; color: #fff; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Save
+                        Changes</button>
+                    <button type="button" id="cancelAddressButton"
+                        style="background: #eee; color: #333; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div> <!-- ALL CONTAINERS ARE CLOSED CLEANLY HERE -->
 
 
-<!-- ACCOUNT DASHBOARD PERMANENT ADDRESS WORKSPACE -->
-<div id="accountAddressCard" style="background: #fff; width: 100%; max-width: 450px; margin: 25px auto; padding: 25px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #051532; font-family: sans-serif; text-align: left;">
-    
-    <!-- Header title themed to match your website styling parameters -->
-    <h3 style="color: #051532; margin: 0 0 15px 0; font-size: 15px; font-weight: bold; border-bottom: 2px solid #f4f6f9; padding-bottom: 8px;">
-        <i class="fa fa-map-marker" style="color: #eba345; margin-right: 5px;"></i> Permanent Shipping Profile
-    </h3>
-    
-    <!-- MODULE A: STANDARD VIEWER (Visible by default) -->
-    <div id="addressDisplayView">
-        <p id="displayAddressText" style="color: #666; font-size: 13px; line-height: 1.6; margin-bottom: 15px; font-style: italic;">No shipping address saved yet.</p>
-        <button id="editAddressButton" style="background: #eba345; color: #051532; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Edit Saved Address</button>
+    <!-- Order History Section Container -->
+    <div class="small-container order-history-section"
+        style="font-family: sans-serif; margin-top: 50px; padding: 10px;">
+        <h2
+            style="color: #051532; margin-bottom: 30px; border-bottom: 3px solid #051532; padding-bottom: 15px; text-transform: uppercase; font-size: 26px;">
+            <i class="fa fa-history"></i> Your Order History
+        </h2>
+
+        <!-- Dynamic Target Container for Javascript Injection -->
+        <div id="orderHistoryContainer">
+            <!-- Loader / Fallback content -->
+            <p style="color: #777;">Loading orders...</p>
+        </div>
     </div>
 
-    <!-- MODULE B: INTERACTIVE EDITING PANEL (Hidden by default) -->
-    <div id="addressEditView" style="display: none;">
-        <form id="accountAddressForm">
-            <div style="margin-bottom: 8px;">
-                <input type="text" id="accShipName" placeholder="Recipient Full Name" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
-            </div>
-            <div style="margin-bottom: 8px;">
-                <input type="tel" id="accShipPhone" placeholder="10-Digit Mobile Number" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
-            </div>
-            <div style="margin-bottom: 8px;">
-                <input type="text" id="accShipStreet" placeholder="Flat/House no., Building, Complete Street" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
-            </div>
-            
-            <!-- City & State horizontal split row fields -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
-                <input type="text" id="accShipCity" placeholder="City / District" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
-                <input type="text" id="accShipState" placeholder="State Name" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
-            </div>
-            
-            <div style="margin-bottom: 12px;">
-                <input type="text" id="accShipPin" placeholder="6-Digit PIN Code" required style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px; font-size:13px; outline:none;">
-            </div>
-            
-            <!-- Form interaction submission control rows -->
-            <div style="display: flex; gap: 8px;">
-                <button type="submit" style="background: #051532; color: #fff; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Save Changes</button>
-                <button type="button" id="cancelAddressButton" style="background: #eee; color: #333; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;">Cancel</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-
-<!-- Order History Section Container -->
-<div class="small-container order-history-section" style="font-family: sans-serif; margin-top: 50px; padding: 10px;">
-    <h2 style="color: #051532; margin-bottom: 30px; border-bottom: 3px solid #051532; padding-bottom: 15px; text-transform: uppercase; font-size: 26px;">
-        <i class="fa fa-history"></i> Your Order History
-    </h2>
-
-    <!-- Dynamic Target Container for Javascript Injection -->
-    <div id="orderHistoryContainer">
-        <!-- Loader / Fallback content -->
-        <p style="color: #777;">Loading orders...</p>
-    </div>
-</div>
 
 
 
 
 
+    <!---------- footer-------->
 
-<!---------- footer--------> 
-
-     <div class="footer">
+    <div class="footer">
         <div class="container">
             <div class="row">
                 <div class="footer-col-1">
@@ -236,7 +275,7 @@
                 </div>
                 <div class="footer-col-2">
                     <img src="images/Logo.png">
-                    <p>Our Purpose Is To Sustainably Make The Pleasure And<br>Benefits 
+                    <p>Our Purpose Is To Sustainably Make The Pleasure And<br>Benefits
                         Of Islamic Items To The Many.</p>
                 </div>
                 <div class="footer-col-3">
@@ -252,141 +291,146 @@
                     <h3>Follow Us</h3>
                     <ul>
                         <a href="">
-                            <li>Facebook</li></a>
+                            <li>Facebook</li>
+                        </a>
                         <a href="">
-                            <li>Twitter</li></a>
-                        <a href="https://www.instagram.com/asifkhanattari26?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
-                            <li>Instagram</li></a>
+                            <li>Twitter</li>
+                        </a>
+                        <a
+                            href="https://www.instagram.com/asifkhanattari26?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
+                            <li>Instagram</li>
+                        </a>
                         <a href="">
-                            <li>Youtube</li></a>
+                            <li>Youtube</li>
+                        </a>
                     </ul>
                 </div>
             </div>
             <hr>
             <p class="copyright">Copyright 2020 - Mujaddidi Collection</p>
         </div>
-     </div>
+    </div>
+    </section>
+
+    </div>
+</body>
 </section>
 
-     </div>
-     </body>    
- </section>
 
 
 
-    
- <!---------JavaScript for Toggle Menu-------> 
-    <script>
+<!---------JavaScript for Toggle Menu------->
+<script>
 
-        var navLinks = document.getElementById("navLinks");
+    var navLinks = document.getElementById("navLinks");
 
-        function showMenu(){
-            navLinks.style.right = "0";
+    function showMenu() {
+        navLinks.style.right = "0";
+    }
+    function hideMenu() {
+        navLinks.style.right = "-200px";
+    }
+
+</script>
+
+
+<!-----------js for Toggle Form--------->
+<script>
+
+    var LoginForm = document.getElementById("LoginForm");
+    var RegForm = document.getElementById("RegForm");
+    var Indicator = document.getElementById("Indicator");
+
+    function register() {
+        RegForm.style.transform = "translateX(0px)";
+        LoginForm.style.transform = "translateX(0px)";
+        Indicator.style.transform = "translateX(100px)";
+    }
+
+    function login() {
+        RegForm.style.transform = "translateX(300px)";
+        LoginForm.style.transform = "translateX(300px)";
+        Indicator.style.transform = "translateX(0px)";
+    }
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const regForm = document.getElementById('RegForm');
+        const loginForm = document.getElementById('LoginForm');
+        const formContainer = document.querySelector('.form-container');
+        const historyContainer = document.getElementById('orderHistoryContainer');
+
+        // Check if user has an active session on load
+        const activeUser = localStorage.getItem('activeUserSession');
+        if (activeUser) {
+            displayDashboard(activeUser);
+        } else {
+            renderOrderHistory(); // Shows "Login Required" fallback message
         }
-        function hideMenu(){
-            navLinks.style.right = "-200px";
+        // 1. REGISTRATION CONTROLLER
+        if (regForm) {
+            regForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const username = regForm.querySelector('input[placeholder="Username"]').value.trim();
+                const email = regForm.querySelector('input[placeholder="Email"]').value.trim();
+                const password = regForm.querySelector('input[placeholder="Password"]').value.trim();
+
+                if (!username || !email || !password) {
+                    alert("Please fill out all registration fields.");
+                    return;
+                }
+
+                let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
+                const userExists = usersDatabase.some(u => u.username.toLowerCase() === username.toLowerCase());
+
+                if (userExists) {
+                    alert("Username is already registered!");
+                    return;
+                }
+
+                usersDatabase.push({ username: username, email: email, password: password });
+                localStorage.setItem('mujaddidiUsers', JSON.stringify(usersDatabase));
+
+                alert("Registration Successful! Please log in.");
+                regForm.reset();
+                if (typeof login === "function") { login(); }
+            });
         }
 
-    </script>
+        // 2. LOGIN CONTROLLER
+        if (loginForm) {
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const usernameInput = loginForm.querySelector('input[placeholder="Username"]').value.trim();
+                const passwordInput = loginForm.querySelector('input[placeholder="Password"]').value.trim();
 
+                let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
+                const matchedUser = usersDatabase.find(u => u.username.toLowerCase() === usernameInput.toLowerCase() && u.password === passwordInput);
 
-<!-----------js for Toggle Form---------> 
-    <script>
+                if (matchedUser) {
+                    alert("Login Successful! Welcome back.");
+                    localStorage.setItem('activeUserSession', matchedUser.username);
+                    loginForm.reset();
+                    displayDashboard(matchedUser.username);
+                    renderOrderHistory();
+                } else {
+                    alert("Invalid Username or Password.");
+                }
+            });
+        }
+        // 3. PROFILE DASHBOARD PANELS
+        function displayDashboard(username) {
+            if (!formContainer) return;
 
-     var LoginForm = document.getElementById("LoginForm");   
-     var RegForm = document.getElementById("RegForm");
-     var Indicator = document.getElementById("Indicator");
-     
-         function register(){
-            RegForm.style.transform = "translateX(0px)";
-            LoginForm.style.transform = "translateX(0px)";
-            Indicator.style.transform = "translateX(100px)";
-         }
+            const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            const personalOrders = centralOrders.filter(order => order.customer && order.customer.accountUser.toLowerCase() === username.toLowerCase());
 
-         function login(){
-            RegForm.style.transform = "translateX(300px)";
-            LoginForm.style.transform = "translateX(300px)";
-            Indicator.style.transform = "translateX(0px)";
-         }
+            formContainer.style.height = "auto";
+            formContainer.style.minHeight = "350px";
+            formContainer.style.padding = "25px 20px";
 
-    </script>
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const regForm = document.getElementById('RegForm');
-    const loginForm = document.getElementById('LoginForm');
-    const formContainer = document.querySelector('.form-container');
-    const historyContainer = document.getElementById('orderHistoryContainer');
-
-    // Check if user has an active session on load
-    const activeUser = localStorage.getItem('activeUserSession');
-    if (activeUser) {
-        displayDashboard(activeUser);
-    } else {
-        renderOrderHistory(); // Shows "Login Required" fallback message
-    }
-    // 1. REGISTRATION CONTROLLER
-    if (regForm) {
-        regForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = regForm.querySelector('input[placeholder="Username"]').value.trim();
-            const email = regForm.querySelector('input[placeholder="Email"]').value.trim();
-            const password = regForm.querySelector('input[placeholder="Password"]').value.trim();
-
-            if (!username || !email || !password) {
-                alert("Please fill out all registration fields.");
-                return;
-            }
-
-            let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
-            const userExists = usersDatabase.some(u => u.username.toLowerCase() === username.toLowerCase());
-            
-            if (userExists) {
-                alert("Username is already registered!");
-                return;
-            }
-
-            usersDatabase.push({ username: username, email: email, password: password });
-            localStorage.setItem('mujaddidiUsers', JSON.stringify(usersDatabase));
-
-            alert("Registration Successful! Please log in.");
-            regForm.reset();
-            if (typeof login === "function") { login(); } 
-        });
-    }
-
-    // 2. LOGIN CONTROLLER
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const usernameInput = loginForm.querySelector('input[placeholder="Username"]').value.trim();
-            const passwordInput = loginForm.querySelector('input[placeholder="Password"]').value.trim();
-
-            let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
-            const matchedUser = usersDatabase.find(u => u.username.toLowerCase() === usernameInput.toLowerCase() && u.password === passwordInput);
-
-            if (matchedUser) {
-                alert("Login Successful! Welcome back.");
-                localStorage.setItem('activeUserSession', matchedUser.username); 
-                loginForm.reset();
-                displayDashboard(matchedUser.username);
-                renderOrderHistory(); 
-            } else {
-                alert("Invalid Username or Password.");
-            }
-        });
-    }
-    // 3. PROFILE DASHBOARD PANELS
-    function displayDashboard(username) {
-        if (!formContainer) return;
-
-        const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-        const personalOrders = centralOrders.filter(order => order.customer && order.customer.accountUser.toLowerCase() === username.toLowerCase());
-
-        formContainer.style.height = "auto";
-        formContainer.style.minHeight = "350px";
-        formContainer.style.padding = "25px 20px";
-
-        formContainer.innerHTML = `
+            formContainer.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center; width: 100%; font-family: sans-serif;">
                 <i class="fa fa-user-circle" style="font-size: 50px; color: #051532; margin-bottom: 10px;"></i>
                 <h3 style="color: #051532; margin: 0; font-size: 14px;">Assalamu Alaikum,</h3>
@@ -395,59 +439,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button id="logoutBtn" style="width: 100%; background-color: #051532; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 25px;">Logout</button>
             </div>`;
 
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            if (confirm("Are you sure you want to log out?")) {
-                localStorage.removeItem('activeUserSession');
-                window.location.reload();
-            }
-        });
-    }
+            document.getElementById('logoutBtn').addEventListener('click', function () {
+                if (confirm("Are you sure you want to log out?")) {
+                    localStorage.removeItem('activeUserSession');
+                    window.location.reload();
+                }
+            });
+        }
         // 4. LOWER CHRONOLOGICAL TIMELINE INVOICES (WITH RED CANCEL OVERRIDE)
-    function renderOrderHistory() {
-        if (!historyContainer) return;
+        function renderOrderHistory() {
+            if (!historyContainer) return;
 
-        const currentSessionUser = localStorage.getItem('activeUserSession');
-        if (!currentSessionUser) {
-            historyContainer.innerHTML = `
+            const currentSessionUser = localStorage.getItem('activeUserSession');
+            if (!currentSessionUser) {
+                historyContainer.innerHTML = `
                 <div style="padding: 50px 20px; text-align: center; border: 2px dashed #eee; border-radius: 8px; background: #fafafa; font-family: sans-serif;">
                     <i class="fa fa-lock" style="font-size: 40px; color: #051532; margin-bottom: 15px; display: block;"></i>
                     <h3 style="color: #051532; margin: 0 0 5px 0; font-size: 18px;">Login Required</h3>
                     <p style="color: #777; margin: 0; font-size: 14px;">Please sign in above to view your order logs history sheet tracker.</p>
                 </div>`;
-            return;
-        }
+                return;
+            }
 
-        const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-        let userOrders = centralOrders.filter(order => order.customer && order.customer.accountUser.toLowerCase() === currentSessionUser.toLowerCase());
+            const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            let userOrders = centralOrders.filter(order => order.customer && order.customer.accountUser.toLowerCase() === currentSessionUser.toLowerCase());
 
-        if (userOrders.length === 0) {
-            historyContainer.innerHTML = `
+            if (userOrders.length === 0) {
+                historyContainer.innerHTML = `
                 <div style="padding: 50px 20px; text-align: center; border: 2px dashed #eee; border-radius: 8px; background: #fafafa; font-family: sans-serif;">
                     <i class="fa fa-shopping-bag" style="font-size: 40px; color: #ccc; margin-bottom: 15px; display: block;"></i>
                     <h3 style="color: #051532; margin: 0 0 10px 0; font-size: 18px;">No Orders Placed Yet</h3>
                     <a href="PRODUCTS.html" style="background-color: #eba345; color: #051532; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block;">Go Shopping</a>
                 </div>`;
-            return;
-        }
+                return;
+            }
 
-                let historyHtml = '';
-        userOrders.forEach((order) => {
-            let orderStatus = order.status || 'Placed';
-            let isCancelled = (orderStatus === 'Cancelled');
-            
-            let actionButtonHtml = '';
+            let historyHtml = '';
+            userOrders.forEach((order) => {
+                let orderStatus = order.status || 'Placed';
+                let isCancelled = (orderStatus === 'Cancelled');
 
-            // 1. Maintain your dynamic status controls
-            if (orderStatus === 'Placed' || orderStatus === 'Shipped' || orderStatus === 'Processing' || orderStatus === 'In Transit') {
-                actionButtonHtml = `<button onclick="cancelUserOrder(${order.orderId})" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
-            } else if (orderStatus === 'Delivered') {
-                actionButtonHtml = `<button onclick="returnExchangeOrder(${order.orderId})" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
-            } else {
-                actionButtonHtml = `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${orderStatus} State</span>`;
-            }             
-            
-            // 2. THE CHOSEN TEMPLATE PRINT BUTTON COMPONENT (Appended underneath or next to buttons)
-            actionButtonHtml += `
+                let actionButtonHtml = '';
+
+                // 1. Maintain your dynamic status controls
+                if (orderStatus === 'Placed' || orderStatus === 'Shipped' || orderStatus === 'Processing' || orderStatus === 'In Transit') {
+                    actionButtonHtml = `<button onclick="cancelUserOrder(${order.orderId})" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
+                } else if (orderStatus === 'Delivered') {
+                    actionButtonHtml = `<button onclick="returnExchangeOrder(${order.orderId})" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
+                } else {
+                    actionButtonHtml = `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${orderStatus} State</span>`;
+                }
+
+                // 2. THE CHOSEN TEMPLATE PRINT BUTTON COMPONENT (Appended underneath or next to buttons)
+                actionButtonHtml += `
             <button class="print-receipt-btn" onclick="triggerReceiptPrint(this)" 
                     data-order-id="${order.orderId}" 
                     data-date="${order.date || 'N/A'}" 
@@ -458,73 +502,73 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>`;
 
 
-            if (orderStatus === 'Placed' || orderStatus === 'Shipped' || orderStatus === 'Processing' || orderStatus === 'In Transit') {
-            // Show Red Cancel button for active orders
-            actionButtonHtml = `<button onclick="cancelUserOrder(${order.orderId})" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
-            } else if (orderStatus === 'Delivered') {
-            // Automatically swap to Dark Blue Return/Exchange button once delivered
-            actionButtonHtml = `<button onclick="returnExchangeOrder(${order.orderId})" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
-            } else {
-            // Placeholder text if the order is already Cancelled or Return Requested
-            ctionButtonHtml = `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${orderStatus} State</span>`;
-            }          
-
-            
-            // Calculate 15-days future arrival date
-            let estimatedDeliveryDate = order.deliveryDate;
-            if (!estimatedDeliveryDate && order.date) {
-                let placementDate = new Date(order.date);
-                if (!isNaN(placementDate.getTime())) {
-                    placementDate.setDate(placementDate.getDate() + 15);
-                    estimatedDeliveryDate = placementDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+                if (orderStatus === 'Placed' || orderStatus === 'Shipped' || orderStatus === 'Processing' || orderStatus === 'In Transit') {
+                    // Show Red Cancel button for active orders
+                    actionButtonHtml = `<button onclick="cancelUserOrder(${order.orderId})" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
+                } else if (orderStatus === 'Delivered') {
+                    // Automatically swap to Dark Blue Return/Exchange button once delivered
+                    actionButtonHtml = `<button onclick="returnExchangeOrder(${order.orderId})" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
                 } else {
+                    // Placeholder text if the order is already Cancelled or Return Requested
+                    ctionButtonHtml = `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${orderStatus} State</span>`;
+                }
+
+
+                // Calculate 15-days future arrival date
+                let estimatedDeliveryDate = order.deliveryDate;
+                if (!estimatedDeliveryDate && order.date) {
+                    let placementDate = new Date(order.date);
+                    if (!isNaN(placementDate.getTime())) {
+                        placementDate.setDate(placementDate.getDate() + 15);
+                        estimatedDeliveryDate = placementDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+                    } else {
+                        estimatedDeliveryDate = "15 Days from booking";
+                    }
+                } else if (!estimatedDeliveryDate) {
                     estimatedDeliveryDate = "15 Days from booking";
                 }
-            } else if (!estimatedDeliveryDate) {
-                estimatedDeliveryDate = "15 Days from booking";
-            }
 
-            // Map tracking bar indices
-            const statesArray = ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
-            let activeIndex = statesArray.indexOf(orderStatus);
-            if (activeIndex === -1) activeIndex = 0;
+                // Map tracking bar indices
+                const statesArray = ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
+                let activeIndex = statesArray.indexOf(orderStatus);
+                if (activeIndex === -1) activeIndex = 0;
 
-            // Determine tracking fill widths and color rules dynamically
-            let fillWidth = isCancelled ? 100 : (activeIndex / (statesArray.length - 1)) * 100;
-            let themeLineColor = isCancelled ? '#c5221f' : '#eba345'; // Switches to Red if Cancelled
+                // Determine tracking fill widths and color rules dynamically
+                let fillWidth = isCancelled ? 100 : (activeIndex / (statesArray.length - 1)) * 100;
+                let themeLineColor = isCancelled ? '#c5221f' : '#eba345'; // Switches to Red if Cancelled
 
-            let badgeBg = '#fff3cd'; let badgeColor = '#b06000';
-            if (orderStatus === 'Delivered') { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
-            if (orderStatus === 'Cancelled') { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
+                let badgeBg = '#fff3cd'; let badgeColor = '#b06000';
+                if (orderStatus === 'Delivered') { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
+                if (orderStatus === 'Cancelled') { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
 
-            // Loop to draw the 5 small circle nodes on the progress tracking track line
-            let timelineStepsHtml = '';
-            statesArray.forEach((stateName, index) => {
-                let circleBg = '#e0e0e0';
-                let textColor = '#999';
-                let shadowStyle = '';
-                
+                // Loop to draw the 5 small circle nodes on the progress tracking track line
+                let timelineStepsHtml = '';
+                statesArray.forEach((stateName, index) => {
+                    let circleBg = '#e0e0e0';
+                    let textColor = '#999';
+                    let shadowStyle = '';
 
-                if (isCancelled) {
-                    // Turn everything red to signal a completely broken pipeline path
-                    circleBg = '#c5221f';
-                    textColor = '#c5221f';
-                    if (index === 0) shadowStyle = 'box-shadow: 0 0 0 4px rgba(197, 34, 31, 0.25);';
-                } else {
-                    // Standard Golden Theme Progress Metrics
-                    circleBg = index <= activeIndex ? '#eba345' : '#e0e0e0';
-                    textColor = index <= activeIndex ? '#051532' : '#999';
-                    if (index === activeIndex) shadowStyle = 'box-shadow: 0 0 0 4px rgba(235, 163, 69, 0.25);';
-                }
 
-                timelineStepsHtml += `
+                    if (isCancelled) {
+                        // Turn everything red to signal a completely broken pipeline path
+                        circleBg = '#c5221f';
+                        textColor = '#c5221f';
+                        if (index === 0) shadowStyle = 'box-shadow: 0 0 0 4px rgba(197, 34, 31, 0.25);';
+                    } else {
+                        // Standard Golden Theme Progress Metrics
+                        circleBg = index <= activeIndex ? '#eba345' : '#e0e0e0';
+                        textColor = index <= activeIndex ? '#051532' : '#999';
+                        if (index === activeIndex) shadowStyle = 'box-shadow: 0 0 0 4px rgba(235, 163, 69, 0.25);';
+                    }
+
+                    timelineStepsHtml += `
                     <div style="flex: 1; text-align: center; position: relative; z-index: 2;">
                         <div style="width: 12px; height: 12px; background-color: ${circleBg}; border-radius: 50%; margin: 0 auto 6px auto; ${shadowStyle} transition: background 0.3s;"></div>
                         <span style="font-size: 8px; font-weight: bold; color: ${textColor}; display: block; text-transform: uppercase; line-height: 1.2;">${stateName}</span>
                     </div>`;
-            });
+                });
 
-            historyHtml += `
+                historyHtml += `
                 <div style="border: 1px solid #eee; border-radius: 8px; margin-bottom: 25px; background: #fff; text-align: left; font-family: sans-serif; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
                     
                     <!-- Top Summary Card Strip -->
@@ -547,11 +591,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <!-- Items Display Container Rows -->
                     <div style="padding: 10px 20px;">`;
-                        
 
-            if (order.items && Array.isArray(order.items)) {
-                order.items.forEach((item) => {
-                    historyHtml += `
+
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach((item) => {
+                        historyHtml += `
                         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #f1f1f1; padding: 12px 0; flex-wrap: wrap; gap: 10px;">
                             <div style="display: flex; align-items: center;">
                                 <img src="${item.image || "images/Logo.png"}" alt="Thumb" style="width:45px; height:45px; object-fit:cover; border-radius:4px; margin-right:12px; border:1px solid #eee;">
@@ -562,178 +606,178 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p style="margin:1px 0 0 0; color:#777; font-size:11px;">Price: ₹${parseFloat(item.price).toFixed(2)}</p>
                             </div>
                         </div>`;
-                });
-            }
+                    });
+                }
 
-            historyHtml += `
+                historyHtml += `
         <!-- Bottom Action Row -->
         <div style="padding: 12px 20px 5px 0; display: flex; justify-content: flex-end; align-items: center; border-top: 1px dashed #eee; margin-top: 10px;">
             ${actionButtonHtml}
         </div>
     </div></div>`;
-        });
+            });
 
-        historyContainer.innerHTML = historyHtml;
-    }
+            historyContainer.innerHTML = historyHtml;
+        }
 
-    renderOrderHistory();
-});
+        renderOrderHistory();
+    });
 
 </script>
 
 <script>
 
 
-// Action Handler for Cancel Button
-window.cancelUserOrder = function(orderId) {
-    if (confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
-        let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-        
-        centralOrders = centralOrders.map(order => {
-            if (order.orderId === orderId) { order.status = 'Cancelled'; }
-            return order;
-        });
+    // Action Handler for Cancel Button
+    window.cancelUserOrder = function (orderId) {
+        if (confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
+            let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
 
-        localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
-        alert("❌ Your order has been successfully cancelled. Refund will be processed.");
-        window.location.reload(); // Instantly refresh layout grids
-    }
-};
+            centralOrders = centralOrders.map(order => {
+                if (order.orderId === orderId) { order.status = 'Cancelled'; }
+                return order;
+            });
 
-// Action Handler for Return / Exchange Button
-window.returnExchangeOrder = function(orderId) {
-    let selection = prompt("Type 'RETURN' to claim store refund credit, or type 'EXCHANGE' to change product sizes:");
-    if (!selection) return; 
-    selection = selection.toUpperCase().trim();
+            localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
+            alert("❌ Your order has been successfully cancelled. Refund will be processed.");
+            window.location.reload(); // Instantly refresh layout grids
+        }
+    };
 
-    if (selection === "RETURN" || selection === "EXCHANGE") {
-        let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-        
-        centralOrders = centralOrders.map(order => {
-            if (order.orderId === orderId) { order.status = 'Return Requested'; }
-            return order;
-        });
+    // Action Handler for Return / Exchange Button
+    window.returnExchangeOrder = function (orderId) {
+        let selection = prompt("Type 'RETURN' to claim store refund credit, or type 'EXCHANGE' to change product sizes:");
+        if (!selection) return;
+        selection = selection.toUpperCase().trim();
 
-        localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
-        alert(`📨 Success! Your ${selection} request has been submitted. Our team will collect the package.`);
-        window.location.reload(); 
-    } else {
-        alert("Invalid input parameters. Please type exactly 'RETURN' or 'EXCHANGE'.");
-    }
-};
+        if (selection === "RETURN" || selection === "EXCHANGE") {
+            let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+
+            centralOrders = centralOrders.map(order => {
+                if (order.orderId === orderId) { order.status = 'Return Requested'; }
+                return order;
+            });
+
+            localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
+            alert(`📨 Success! Your ${selection} request has been submitted. Our team will collect the package.`);
+            window.location.reload();
+        } else {
+            alert("Invalid input parameters. Please type exactly 'RETURN' or 'EXCHANGE'.");
+        }
+    };
 
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // 1. Identify which account profile username dashboard is open
-    const currentActiveUser = localStorage.getItem('activeUserSession');
-    if (!currentActiveUser) return; // Halt script execution tracking if user is a Guest
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Identify which account profile username dashboard is open
+        const currentActiveUser = localStorage.getItem('activeUserSession');
+        if (!currentActiveUser) return; // Halt script execution tracking if user is a Guest
 
-    const userKey = currentActiveUser.toLowerCase().trim();
+        const userKey = currentActiveUser.toLowerCase().trim();
 
-    // 2. RENDERING CORE: Reads database objects and prints address text strings cleanly
-    const refreshDisplayView = function() {
-        const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-        const saved = addressBook[userKey];
-        const textBlock = document.getElementById("displayAddressText");
+        // 2. RENDERING CORE: Reads database objects and prints address text strings cleanly
+        const refreshDisplayView = function () {
+            const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            const saved = addressBook[userKey];
+            const textBlock = document.getElementById("displayAddressText");
 
-        if (saved && textBlock) {
-            textBlock.innerHTML = `
+            if (saved && textBlock) {
+                textBlock.innerHTML = `
                 <strong>${escapeHTML(saved.fullName)}</strong><br>
                 ${escapeHTML(saved.street)}, ${escapeHTML(saved.city)}, ${escapeHTML(saved.state)}<br>
                 PIN Code: <strong>${escapeHTML(saved.pinCode)}</strong><br>
                 Phone Number: ${escapeHTML(saved.phone)}
             `;
-            textBlock.style.fontStyle = "normal"; // Remove default empty italic styling text
-        }
-    };
-    
-    // Trigger address loading trace configuration on boot sequence initialization
-    refreshDisplayView();
-
-    // 3. EDIT CLICK HANDLER: Opens input fields and loads old saved details into values
-    document.getElementById("editAddressButton").addEventListener("click", function() {
-        document.getElementById("addressDisplayView").style.display = "none";
-        document.getElementById("addressEditView").style.display = "block";
-
-        const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-        const saved = addressBook[userKey] || {};
-
-        // Auto-populate input boxes with existing values
-        document.getElementById("accShipName").value = saved.fullName || "";
-        document.getElementById("accShipPhone").value = saved.phone || "";
-        document.getElementById("accShipStreet").value = saved.street || "";
-        document.getElementById("accShipCity").value = saved.city || "";
-        document.getElementById("accShipState").value = saved.state || "";
-        document.getElementById("accShipPin").value = saved.pinCode || "";
-    });
-
-    // 4. CANCEL CLICK HANDLER: Hides input forms and reverts back to display pane text
-    document.getElementById("cancelAddressButton").addEventListener("click", function() {
-        document.getElementById("addressDisplayView").style.display = "block";
-        document.getElementById("addressEditView").style.display = "none";
-    });
-
-    // 5. SUBMIT HANDLER: Packages new inputs and updates master registry cache keys
-    document.getElementById("accountAddressForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        
-        const freshAddressData = {
-            fullName: document.getElementById("accShipName").value.trim(),
-            phone: document.getElementById("accShipPhone").value.trim(),
-            street: document.getElementById("accShipStreet").value.trim(),
-            city: document.getElementById("accShipCity").value.trim(),
-            state: document.getElementById("accShipState").value.trim(),
-            pinCode: document.getElementById("accShipPin").value.trim()
+                textBlock.style.fontStyle = "normal"; // Remove default empty italic styling text
+            }
         };
 
-        // Open directory database array, inject data at username index, commit to cache storage
-        let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-        addressBook[userKey] = freshAddressData;
-        localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
-
-        alert("Shipping profile address updated successfully!");
-        
-        // Return view UI block back to layout home states
-        document.getElementById("addressDisplayView").style.display = "block";
-        document.getElementById("addressEditView").style.display = "none";
-        
-        // Re-execute display mapper engine parameters
+        // Trigger address loading trace configuration on boot sequence initialization
         refreshDisplayView();
-    });
 
-    // Cross-Site Scripting Injection text filtering utility helper
-    function escapeHTML(str) {
-        return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
-    }
-});
+        // 3. EDIT CLICK HANDLER: Opens input fields and loads old saved details into values
+        document.getElementById("editAddressButton").addEventListener("click", function () {
+            document.getElementById("addressDisplayView").style.display = "none";
+            document.getElementById("addressEditView").style.display = "block";
+
+            const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            const saved = addressBook[userKey] || {};
+
+            // Auto-populate input boxes with existing values
+            document.getElementById("accShipName").value = saved.fullName || "";
+            document.getElementById("accShipPhone").value = saved.phone || "";
+            document.getElementById("accShipStreet").value = saved.street || "";
+            document.getElementById("accShipCity").value = saved.city || "";
+            document.getElementById("accShipState").value = saved.state || "";
+            document.getElementById("accShipPin").value = saved.pinCode || "";
+        });
+
+        // 4. CANCEL CLICK HANDLER: Hides input forms and reverts back to display pane text
+        document.getElementById("cancelAddressButton").addEventListener("click", function () {
+            document.getElementById("addressDisplayView").style.display = "block";
+            document.getElementById("addressEditView").style.display = "none";
+        });
+
+        // 5. SUBMIT HANDLER: Packages new inputs and updates master registry cache keys
+        document.getElementById("accountAddressForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const freshAddressData = {
+                fullName: document.getElementById("accShipName").value.trim(),
+                phone: document.getElementById("accShipPhone").value.trim(),
+                street: document.getElementById("accShipStreet").value.trim(),
+                city: document.getElementById("accShipCity").value.trim(),
+                state: document.getElementById("accShipState").value.trim(),
+                pinCode: document.getElementById("accShipPin").value.trim()
+            };
+
+            // Open directory database array, inject data at username index, commit to cache storage
+            let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            addressBook[userKey] = freshAddressData;
+            localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+
+            alert("Shipping profile address updated successfully!");
+
+            // Return view UI block back to layout home states
+            document.getElementById("addressDisplayView").style.display = "block";
+            document.getElementById("addressEditView").style.display = "none";
+
+            // Re-execute display mapper engine parameters
+            refreshDisplayView();
+        });
+
+        // Cross-Site Scripting Injection text filtering utility helper
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+    });
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const currentActiveUser = localStorage.getItem('activeUserSession');
-    if (!currentActiveUser) return; // Exit tracking sequence if user session object is empty [regForm]
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentActiveUser = localStorage.getItem('activeUserSession');
+        if (!currentActiveUser) return; // Exit tracking sequence if user session object is empty [regForm]
 
-    const userKey = currentActiveUser.toLowerCase().trim();
-    const listViewer = document.getElementById("addressBookListViewer");
-    const formPanel = document.getElementById("addressFormModalView");
-    const addressForm = document.getElementById("accountAddressForm");
+        const userKey = currentActiveUser.toLowerCase().trim();
+        const listViewer = document.getElementById("addressBookListViewer");
+        const formPanel = document.getElementById("addressFormModalView");
+        const addressForm = document.getElementById("accountAddressForm");
 
-    // 1. RE-RENDER ENGINE: Pulls array indices and converts them to listing components
-    function renderAddressDirectory() {
-        const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-        const userAddressesArray = addressBook[userKey] || [];
-        
-        listViewer.innerHTML = "";
+        // 1. RE-RENDER ENGINE: Pulls array indices and converts them to listing components
+        function renderAddressDirectory() {
+            const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            const userAddressesArray = addressBook[userKey] || [];
 
-        if (userAddressesArray.length === 0) {
-            listViewer.innerHTML = '<p style="color: #888; font-size: 13px; font-style: italic; margin: 10px 0;">No delivery addresses saved yet. Click the + icon to add your first one!</p>';
-            return;
-        }
+            listViewer.innerHTML = "";
 
-        userAddressesArray.forEach((address, index) => {
-            const isDefault = address.isDefault ? true : false;
-            
-            const addressBlockHTML = `
+            if (userAddressesArray.length === 0) {
+                listViewer.innerHTML = '<p style="color: #888; font-size: 13px; font-style: italic; margin: 10px 0;">No delivery addresses saved yet. Click the + icon to add your first one!</p>';
+                return;
+            }
+
+            userAddressesArray.forEach((address, index) => {
+                const isDefault = address.isDefault ? true : false;
+
+                const addressBlockHTML = `
                 <div style="border: 1px solid ${isDefault ? '#eba345' : '#eee'}; background: ${isDefault ? '#fdfaf4' : '#fff'}; padding: 15px; border-radius: 4px; margin-bottom: 12px; position: relative;">
                     ${isDefault ? '<span style="position:absolute; top:12px; right:12px; font-size:10px; background:#eba345; color:#051532; padding:2px 6px; font-weight:bold; border-radius:3px; text-transform:uppercase;">Primary Default</span>' : ''}
                     <p style="color: #444; font-size: 13px; line-height: 1.5; margin: 0 0 10px 0; padding-right: 80px;">
@@ -747,269 +791,269 @@ document.addEventListener("DOMContentLoaded", function() {
                         ${!isDefault ? `<button class="action-default-btn" data-index="${index}" style="background:none; border:none; color:#d97706; font-size:12px; font-weight:bold; cursor:pointer; padding:0;">Set as Default</button>` : ''}
                     </div>
                 </div>`;
-            listViewer.insertAdjacentHTML('beforeend', addressBlockHTML);
-        });
-
-        attachActionEventListeners();
-    }
-
-    // 2. INTERACTION HUB: Setup event routing scopes for dynamically generated elements
-    function attachActionEventListeners() {
-        // Handle clicking Edit links
-        listViewer.querySelectorAll(".action-edit-btn").forEach(btn => {
-            btn.addEventListener("click", function() {
-                const idx = this.getAttribute("data-index");
-                const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-                const target = addressBook[userKey][idx];
-
-                document.getElementById("formActionTitle").textContent = "Edit Selected Address";
-                document.getElementById("editingAddressIndex").value = idx;
-                
-                document.getElementById("accShipName").value = target.fullName || "";
-                document.getElementById("accShipPhone").value = target.phone || "";
-                document.getElementById("accShipStreet").value = target.street || "";
-                document.getElementById("accShipCity").value = target.city || "";
-                document.getElementById("accShipState").value = target.state || "";
-                document.getElementById("accShipPin").value = target.pinCode || "";
-
-                formPanel.style.display = "block";
+                listViewer.insertAdjacentHTML('beforeend', addressBlockHTML);
             });
-        });
 
-        // Handle Deletions cleanly
-        listViewer.querySelectorAll(".action-delete-btn").forEach(btn => {
-            btn.addEventListener("click", function() {
-                if (confirm("Are you sure you want to remove this delivery address?")) {
-                    const idx = parseInt(this.getAttribute("data-index"), 10);
-                    let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-                    
-                    addressBook[userKey].splice(idx, 1);
-                    localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
-                    renderAddressDirectory();
-                }
-            });
-        });
-
-        // Handle Default assignment transformations
-        listViewer.querySelectorAll(".action-default-btn").forEach(btn => {
-            btn.addEventListener("click", function() {
-                const idx = parseInt(this.getAttribute("data-index"), 10);
-                let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-                
-                addressBook[userKey].forEach((addr, i) => { addr.isDefault = (i === idx); });
-                localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
-                renderAddressDirectory();
-            });
-        });
-    }
-
-    // 3. PLUS BUTTON (+) & SUBMIT FLOW TRIGGER ENGINE RULES
-    document.getElementById("addNewAddressBtn").addEventListener("click", function() {
-        addressForm.reset();
-        document.getElementById("formActionTitle").textContent = "Add New Address";
-        document.getElementById("editingAddressIndex").value = ""; // Empty implies fresh entry
-        formPanel.style.display = "block";
-    });
-
-    document.getElementById("cancelAddressFormBtn").addEventListener("click", function() {
-        formPanel.style.display = "none";
-        addressForm.reset();
-    });
-
-    addressForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        
-        const idxValue = document.getElementById("editingAddressIndex").value;
-        const freshPayload = {
-            fullName: document.getElementById("accShipName").value.trim(),
-            phone: document.getElementById("accShipPhone").value.trim(),
-            street: document.getElementById("accShipStreet").value.trim(),
-            city: document.getElementById("accShipCity").value.trim(),
-            state: document.getElementById("accShipState").value.trim(),
-            pinCode: document.getElementById("accShipPin").value.trim(),
-            isDefault: idxValue === "" ? false : false // Handled cleanly below
-        };
-
-        let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-        if (!addressBook[userKey]) addressBook[userKey] = [];
-
-        if (idxValue === "") {
-            // Fresh Add Entry logic: if it's the very first item, make it the default choice automatically
-            if (addressBook[userKey].length === 0) freshPayload.isDefault = true;
-            addressBook[userKey].push(freshPayload);
-        } else {
-            // Array Update entry track pathway updates
-            const indexInt = parseInt(idxValue, 10);
-            freshPayload.isDefault = addressBook[userKey][indexInt].isDefault; // Maintain flag status
-            addressBook[userKey][indexInt] = freshPayload;
+            attachActionEventListeners();
         }
 
-        localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
-        formPanel.style.display = "none";
-        addressForm.reset();
+        // 2. INTERACTION HUB: Setup event routing scopes for dynamically generated elements
+        function attachActionEventListeners() {
+            // Handle clicking Edit links
+            listViewer.querySelectorAll(".action-edit-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const idx = this.getAttribute("data-index");
+                    const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+                    const target = addressBook[userKey][idx];
+
+                    document.getElementById("formActionTitle").textContent = "Edit Selected Address";
+                    document.getElementById("editingAddressIndex").value = idx;
+
+                    document.getElementById("accShipName").value = target.fullName || "";
+                    document.getElementById("accShipPhone").value = target.phone || "";
+                    document.getElementById("accShipStreet").value = target.street || "";
+                    document.getElementById("accShipCity").value = target.city || "";
+                    document.getElementById("accShipState").value = target.state || "";
+                    document.getElementById("accShipPin").value = target.pinCode || "";
+
+                    formPanel.style.display = "block";
+                });
+            });
+
+            // Handle Deletions cleanly
+            listViewer.querySelectorAll(".action-delete-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    if (confirm("Are you sure you want to remove this delivery address?")) {
+                        const idx = parseInt(this.getAttribute("data-index"), 10);
+                        let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+
+                        addressBook[userKey].splice(idx, 1);
+                        localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+                        renderAddressDirectory();
+                    }
+                });
+            });
+
+            // Handle Default assignment transformations
+            listViewer.querySelectorAll(".action-default-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const idx = parseInt(this.getAttribute("data-index"), 10);
+                    let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+
+                    addressBook[userKey].forEach((addr, i) => { addr.isDefault = (i === idx); });
+                    localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+                    renderAddressDirectory();
+                });
+            });
+        }
+
+        // 3. PLUS BUTTON (+) & SUBMIT FLOW TRIGGER ENGINE RULES
+        document.getElementById("addNewAddressBtn").addEventListener("click", function () {
+            addressForm.reset();
+            document.getElementById("formActionTitle").textContent = "Add New Address";
+            document.getElementById("editingAddressIndex").value = ""; // Empty implies fresh entry
+            formPanel.style.display = "block";
+        });
+
+        document.getElementById("cancelAddressFormBtn").addEventListener("click", function () {
+            formPanel.style.display = "none";
+            addressForm.reset();
+        });
+
+        addressForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const idxValue = document.getElementById("editingAddressIndex").value;
+            const freshPayload = {
+                fullName: document.getElementById("accShipName").value.trim(),
+                phone: document.getElementById("accShipPhone").value.trim(),
+                street: document.getElementById("accShipStreet").value.trim(),
+                city: document.getElementById("accShipCity").value.trim(),
+                state: document.getElementById("accShipState").value.trim(),
+                pinCode: document.getElementById("accShipPin").value.trim(),
+                isDefault: idxValue === "" ? false : false // Handled cleanly below
+            };
+
+            let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+            if (!addressBook[userKey]) addressBook[userKey] = [];
+
+            if (idxValue === "") {
+                // Fresh Add Entry logic: if it's the very first item, make it the default choice automatically
+                if (addressBook[userKey].length === 0) freshPayload.isDefault = true;
+                addressBook[userKey].push(freshPayload);
+            } else {
+                // Array Update entry track pathway updates
+                const indexInt = parseInt(idxValue, 10);
+                freshPayload.isDefault = addressBook[userKey][indexInt].isDefault; // Maintain flag status
+                addressBook[userKey][indexInt] = freshPayload;
+            }
+
+            localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+            formPanel.style.display = "none";
+            addressForm.reset();
+            renderAddressDirectory();
+        });
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        // Boot directory parsing routine
         renderAddressDirectory();
     });
-
-    function escapeHTML(str) {
-        return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
-    }
-
-    // Boot directory parsing routine
-    renderAddressDirectory();
-});
 </script>
 <!-- SCRIPT PART 1: THE DISTRICTS REFERENCE INDEX -->
 <script>
-const accountDistrictDatabase = {
-    "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Nellore", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"],
-    "Arunachal Pradesh": ["Tawang", "West Kameng", "East Kameng", "Papum Pare", "Kurung Kumey", "Kra Daadi", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang", "Siang", "Upper Siang", "Lower Siang", "Dibang Valley", "Lower Dibang Valley", "Lohit", "Anjaw", "Changlang", "Tirap", "Longding", "Namsai", "Kamle"],
-    "Assam": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup Metropolitan", "Kamrup Rural", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", "West Karbi Anglong"],
-    "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
-    "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Janjgir-Champa", "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Koriya", "Mahasamund", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja", "Gaurela-Pendra-Marwahi"],
-    "Goa": ["North Goa", "South Goa"],
-    "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udepur", "Dahod", "Dang", "Devbhumi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
-    "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
-    "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"],
-    "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahibganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"],
-    "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikkaballapur", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayapura", "Yadgir", "Vijayanagara"],
-    "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Wayand", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur"],
-    "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", "Neemuch", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha", "Niwari"],
-    "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
-    "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Senapati", "Tamenglong", "Thoubal", "Ukhrul", "Kangpokpi", "Tengnoupal", "Pherzawl", "Noney", "Kamjong", "Jiribam", "Kakching"],
-    "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"],
-    "Mizoram": ["Aizawl", "Champhai", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Serchhip", "Hnahthial", "Khawzawl", "Saitual"],
-    "Nagaland": ["Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto", "Noklak", "Chümoukedima", "Tseminyü", "Niuland"],
-    "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbanb", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Sonepur", "Sundargarh"],
-    "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Muktsar", "Pathankot", "Patiala", "Rupnagar", "Sahibzada Ajit Singh Nagar", "Sangrur", "Shahid Bhagat Singh Nagar", "Tarn Taran", "Malerkotla"],
-    "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"],
-    "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
-    "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
-    "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Kumuram Bheem", "Mahabubabad", "Mahabubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Rangareddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"],
-    "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"],
-    "Uttar Pradesh": ["Agra", "Aligarh", "Allahabad", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Faizabad", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "RaeBareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
-    "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
-    "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"]
-};
-// SCRIPT PART 2: DROPDOWN SWITCHBOARD LOGIC
-function populateAccountDistricts() {
-    const stateSelect = document.getElementById("accShipState");
-    const citySelect = document.getElementById("accShipCity");
-    const selectedState = stateSelect.value;
+    const accountDistrictDatabase = {
+        "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Nellore", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"],
+        "Arunachal Pradesh": ["Tawang", "West Kameng", "East Kameng", "Papum Pare", "Kurung Kumey", "Kra Daadi", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang", "Siang", "Upper Siang", "Lower Siang", "Dibang Valley", "Lower Dibang Valley", "Lohit", "Anjaw", "Changlang", "Tirap", "Longding", "Namsai", "Kamle"],
+        "Assam": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup Metropolitan", "Kamrup Rural", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", "West Karbi Anglong"],
+        "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
+        "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Janjgir-Champa", "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Koriya", "Mahasamund", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja", "Gaurela-Pendra-Marwahi"],
+        "Goa": ["North Goa", "South Goa"],
+        "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udepur", "Dahod", "Dang", "Devbhumi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
+        "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
+        "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"],
+        "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahibganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"],
+        "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikkaballapur", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayapura", "Yadgir", "Vijayanagara"],
+        "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Wayand", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur"],
+        "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", "Neemuch", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha", "Niwari"],
+        "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
+        "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Senapati", "Tamenglong", "Thoubal", "Ukhrul", "Kangpokpi", "Tengnoupal", "Pherzawl", "Noney", "Kamjong", "Jiribam", "Kakching"],
+        "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"],
+        "Mizoram": ["Aizawl", "Champhai", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Serchhip", "Hnahthial", "Khawzawl", "Saitual"],
+        "Nagaland": ["Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto", "Noklak", "Chümoukedima", "Tseminyü", "Niuland"],
+        "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbanb", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Sonepur", "Sundargarh"],
+        "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Muktsar", "Pathankot", "Patiala", "Rupnagar", "Sahibzada Ajit Singh Nagar", "Sangrur", "Shahid Bhagat Singh Nagar", "Tarn Taran", "Malerkotla"],
+        "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"],
+        "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
+        "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
+        "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Kumuram Bheem", "Mahabubabad", "Mahabubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Rangareddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"],
+        "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"],
+        "Uttar Pradesh": ["Agra", "Aligarh", "Allahabad", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Faizabad", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "RaeBareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
+        "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
+        "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"]
+    };
+    // SCRIPT PART 2: DROPDOWN SWITCHBOARD LOGIC
+    function populateAccountDistricts() {
+        const stateSelect = document.getElementById("accShipState");
+        const citySelect = document.getElementById("accShipCity");
+        const selectedState = stateSelect.value;
 
-    // Reset the district dropdown box entirely
-    citySelect.innerHTML = "";
+        // Reset the district dropdown box entirely
+        citySelect.innerHTML = "";
 
-    if (selectedState === "") {
-        citySelect.innerHTML = '<option value="">Choose State First</option>';
-        citySelect.disabled = true;
-        citySelect.style.background = "#f8f8f8";
-        citySelect.style.color = "#777";
-    } else {
-        // Unlock dropdown and apply clean styling
-        citySelect.disabled = false;
-        citySelect.style.background = "#fff";
-        citySelect.style.color = "#333";
+        if (selectedState === "") {
+            citySelect.innerHTML = '<option value="">Choose State First</option>';
+            citySelect.disabled = true;
+            citySelect.style.background = "#f8f8f8";
+            citySelect.style.color = "#777";
+        } else {
+            // Unlock dropdown and apply clean styling
+            citySelect.disabled = false;
+            citySelect.style.background = "#fff";
+            citySelect.style.color = "#333";
 
-        // Create the default baseline option tag
-        let defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "-- Select District --";
-        citySelect.appendChild(defaultOption);
+            // Create the default baseline option tag
+            let defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "-- Select District --";
+            citySelect.appendChild(defaultOption);
 
-        // Fetch corresponding items and generate option elements
-        const districts = accountDistrictDatabase[selectedState] || [];
-        districts.forEach(function(district) {
-            let option = document.createElement("option");
-            option.value = district;
-            option.textContent = district;
-            citySelect.appendChild(option);
-        });
-    }
-}
-// SCRIPT PART 3: EDIT BUTTON INTEGRATION HANDLER
-document.addEventListener("DOMContentLoaded", function() {
-    const currentActiveUser = localStorage.getItem('activeUserSession');
-    if (!currentActiveUser) return; // Exit tracking sequence if user session object is empty [regForm]
-    
-    const userKey = currentActiveUser.toLowerCase().trim();
-
-    // Listen globally for clicks on the dynamic address "Edit" links
-    document.addEventListener("click", function(e) {
-        if (e.target && e.target.classList.contains("action-edit-btn")) {
-            const idx = e.target.getAttribute("data-index");
-            const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
-            const targetAddress = addressBook[userKey][idx];
-
-            // 1. Populate basic single text inputs
-            document.getElementById("formActionTitle").textContent = "Edit Selected Address";
-            document.getElementById("editingAddressIndex").value = idx;
-            document.getElementById("accShipName").value = targetAddress.fullName || "";
-            document.getElementById("accShipPhone").value = targetAddress.phone || "";
-            document.getElementById("accShipStreet").value = targetAddress.street || "";
-            document.getElementById("accShipPin").value = targetAddress.pinCode || "";
-
-            // 2. Lock and load the dropdown menus cleanly
-            const stateField = document.getElementById("accShipState");
-            if (stateField) {
-                stateField.value = targetAddress.state || "";
-                
-                // Manually trigger the district dropdown populator
-                populateAccountDistricts();
-
-                // Small 50ms delay to let the menu render before choosing the city value
-                setTimeout(function() {
-                    const cityField = document.getElementById("accShipCity");
-                    if (cityField) cityField.value = targetAddress.city || "";
-                }, 50);
-            }
-
-            // Reveal the address container edit form wrapper block
-            const formPanel = document.getElementById("addressFormModalView");
-            if (formPanel) formPanel.style.display = "block";
+            // Fetch corresponding items and generate option elements
+            const districts = accountDistrictDatabase[selectedState] || [];
+            districts.forEach(function (district) {
+                let option = document.createElement("option");
+                option.value = district;
+                option.textContent = district;
+                citySelect.appendChild(option);
+            });
         }
+    }
+    // SCRIPT PART 3: EDIT BUTTON INTEGRATION HANDLER
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentActiveUser = localStorage.getItem('activeUserSession');
+        if (!currentActiveUser) return; // Exit tracking sequence if user session object is empty [regForm]
+
+        const userKey = currentActiveUser.toLowerCase().trim();
+
+        // Listen globally for clicks on the dynamic address "Edit" links
+        document.addEventListener("click", function (e) {
+            if (e.target && e.target.classList.contains("action-edit-btn")) {
+                const idx = e.target.getAttribute("data-index");
+                const addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
+                const targetAddress = addressBook[userKey][idx];
+
+                // 1. Populate basic single text inputs
+                document.getElementById("formActionTitle").textContent = "Edit Selected Address";
+                document.getElementById("editingAddressIndex").value = idx;
+                document.getElementById("accShipName").value = targetAddress.fullName || "";
+                document.getElementById("accShipPhone").value = targetAddress.phone || "";
+                document.getElementById("accShipStreet").value = targetAddress.street || "";
+                document.getElementById("accShipPin").value = targetAddress.pinCode || "";
+
+                // 2. Lock and load the dropdown menus cleanly
+                const stateField = document.getElementById("accShipState");
+                if (stateField) {
+                    stateField.value = targetAddress.state || "";
+
+                    // Manually trigger the district dropdown populator
+                    populateAccountDistricts();
+
+                    // Small 50ms delay to let the menu render before choosing the city value
+                    setTimeout(function () {
+                        const cityField = document.getElementById("accShipCity");
+                        if (cityField) cityField.value = targetAddress.city || "";
+                    }, 50);
+                }
+
+                // Reveal the address container edit form wrapper block
+                const formPanel = document.getElementById("addressFormModalView");
+                if (formPanel) formPanel.style.display = "block";
+            }
+        });
     });
-});
 </script>
 <!-- PART 2: RECEIPT PRINT GENERATION CONTROLLER -->
 <script>
-function triggerReceiptPrint(buttonElement) {
-    // 1. Fetch metadata properties tied directly to the clicked card button instance
-    const id = buttonElement.getAttribute("data-order-id");
-    const date = buttonElement.getAttribute("data-date");
-    const total = buttonElement.getAttribute("data-total");
-    const address = buttonElement.getAttribute("data-address");
+    function triggerReceiptPrint(buttonElement) {
+        // 1. Fetch metadata properties tied directly to the clicked card button instance
+        const id = buttonElement.getAttribute("data-order-id");
+        const date = buttonElement.getAttribute("data-date");
+        const total = buttonElement.getAttribute("data-total");
+        const address = buttonElement.getAttribute("data-address");
 
-    // Try to find the items list attached to this specific order from the master storage log
-    const activeUser = localStorage.getItem('activeUserSession') || "Guest";
-    const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-    const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
-    const itemsArray = matchedOrder.items || [];
+        // Try to find the items list attached to this specific order from the master storage log
+        const activeUser = localStorage.getItem('activeUserSession') || "Guest";
+        const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+        const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
+        const itemsArray = matchedOrder.items || [];
 
-    // Generate table rows dynamically for each purchased product item inside the cart array
-    let itemsTableRowsHTML = "";
-    if (itemsArray.length > 0) {
-        itemsTableRowsHTML = itemsArray.map(item => `
+        // Generate table rows dynamically for each purchased product item inside the cart array
+        let itemsTableRowsHTML = "";
+        if (itemsArray.length > 0) {
+            itemsTableRowsHTML = itemsArray.map(item => `
             <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${item.name || item.title || 'Product Item'}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">${item.quantity || 1}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(item.price || 0).toFixed(2)}</td>
             </tr>
         `).join('');
-    } else {
-        // Fallback row entry description line if explicit array mappings are missing from old caches
-        itemsTableRowsHTML = `
+        } else {
+            // Fallback row entry description line if explicit array mappings are missing from old caches
+            itemsTableRowsHTML = `
             <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${matchedOrder.itemsDescription || 'Standard Collection Purchase'}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">1</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(total).toFixed(2)}</td>
             </tr>`;
-    }
+        }
 
-    // 2. Open a hidden temporary browser context print pipeline window
-    const printWindow = window.open('', '_blank', 'width=800,height=700');
+        // 2. Open a hidden temporary browser context print pipeline window
+        const printWindow = window.open('', '_blank', 'width=800,height=700');
 
-    // 3. Inject your theme design framework directly into the print page context template layout
-    printWindow.document.write(`
+        // 3. Inject your theme design framework directly into the print page context template layout
+        printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
@@ -1087,48 +1131,48 @@ function triggerReceiptPrint(buttonElement) {
                 };
             `);
 
-    // Cleanly close out document write data processing queues
-    printWindow.document.close();
-}
-// PART 2: RECEIPT PRINT GENERATION CONTROLLER 
-window.triggerReceiptPrint = function(buttonElement) {
-    // 1. Fetch metadata properties tied directly to the clicked card button instance
-    const id = buttonElement.getAttribute("data-order-id");
-    const date = buttonElement.getAttribute("data-date");
-    const total = buttonElement.getAttribute("data-total");
-    const address = buttonElement.getAttribute("data-address");
+        // Cleanly close out document write data processing queues
+        printWindow.document.close();
+    }
+    // PART 2: RECEIPT PRINT GENERATION CONTROLLER 
+    window.triggerReceiptPrint = function (buttonElement) {
+        // 1. Fetch metadata properties tied directly to the clicked card button instance
+        const id = buttonElement.getAttribute("data-order-id");
+        const date = buttonElement.getAttribute("data-date");
+        const total = buttonElement.getAttribute("data-total");
+        const address = buttonElement.getAttribute("data-address");
 
-    // Try to find the items list attached to this specific order from the master storage log
-    const activeUser = localStorage.getItem('activeUserSession') || "Guest";
-    const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-    const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
-    const itemsArray = matchedOrder.items || [];
+        // Try to find the items list attached to this specific order from the master storage log
+        const activeUser = localStorage.getItem('activeUserSession') || "Guest";
+        const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+        const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
+        const itemsArray = matchedOrder.items || [];
 
-    // Generate table rows dynamically for each purchased product item inside the cart array
-    let itemsTableRowsHTML = "";
-    if (itemsArray.length > 0) {
-        itemsTableRowsHTML = itemsArray.map(item => `
+        // Generate table rows dynamically for each purchased product item inside the cart array
+        let itemsTableRowsHTML = "";
+        if (itemsArray.length > 0) {
+            itemsTableRowsHTML = itemsArray.map(item => `
             <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${item.name || item.title || 'Product Item'}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">${item.quantity || item.qty || 1}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(item.price || 0).toFixed(2)}</td>
             </tr>
         `).join('');
-    } else {
-        // Fallback row entry description line if explicit array mappings are missing from old caches
-        itemsTableRowsHTML = `
+        } else {
+            // Fallback row entry description line if explicit array mappings are missing from old caches
+            itemsTableRowsHTML = `
             <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${matchedOrder.itemsDescription || 'Standard Collection Purchase'}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">1</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(total).toFixed(2)}</td>
             </tr>`;
-    }
+        }
 
-    // 2. Open a hidden temporary browser context print pipeline window
-    const printWindow = window.open('', '_blank', 'width=800,height=700');
+        // 2. Open a hidden temporary browser context print pipeline window
+        const printWindow = window.open('', '_blank', 'width=800,height=700');
 
-    // 3. Inject your theme design framework directly into the print page context template layout
-    printWindow.document.write(`
+        // 3. Inject your theme design framework directly into the print page context template layout
+        printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
@@ -1203,8 +1247,8 @@ window.triggerReceiptPrint = function(buttonElement) {
         </html>
     `);
 
-    printWindow.document.close();
-};
+        printWindow.document.close();
+    };
 
 </script>
 
@@ -1212,4 +1256,5 @@ window.triggerReceiptPrint = function(buttonElement) {
 
 
 </body>
+
 </html>
