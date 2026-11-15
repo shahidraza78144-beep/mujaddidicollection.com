@@ -359,46 +359,53 @@
         const regForm = document.getElementById('RegForm');
         const loginForm = document.getElementById('LoginForm');
         const formContainer = document.querySelector('.form-container');
-        const historyContainer = document.getElementById('orderHistoryContainer');
 
-        // Sync latest users & orders from server so ANY device sees them
-        async function pullFromServer() {
-            try {
-                const res = await fetch('/api/sync');
-                if (res.ok) {
-                    const serverData = await res.json();
-                    const localUsers = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
-                    const localOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-
-                    // Merge server + local without duplicates
-                    const mergedUsers = [...serverData.users];
-                    localUsers.forEach(lu => {
-                        if (!mergedUsers.some(su => su.username.toLowerCase() === lu.username.toLowerCase())) {
-                            mergedUsers.push(lu);
-                        }
-                    });
-
-                    const mergedOrders = [...serverData.orders];
-                    localOrders.forEach(lo => {
-                        if (!mergedOrders.some(so => String(so.orderId) === String(lo.orderId))) {
-                            mergedOrders.push(lo);
-                        }
-                    });
-
-                    localStorage.setItem('mujaddidiUsers', JSON.stringify(mergedUsers));
-                    localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(mergedOrders));
-                }
-            } catch (e) {
-                console.warn('Offline mode: using local browser storage.');
-            }
+        // Generate or retrieve a persistent unique ID for this browser/device
+        let deviceId = localStorage.getItem('mujaddidiDeviceId');
+        if (!deviceId) {
+            deviceId = 'DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+            localStorage.setItem('mujaddidiDeviceId', deviceId);
         }
 
-        await pullFromServer();
+        function getDeviceLabel() {
+            const ua = navigator.userAgent;
+            if (/Android/i.test(ua)) return 'Android Phone';
+            if (/iPhone|iPad/i.test(ua)) return 'iPhone / iPad';
+            if (/Edg/i.test(ua)) return 'Windows (Edge)';
+            if (/Chrome/i.test(ua)) return 'Windows / PC (Chrome)';
+            return 'Web Browser';
+        }
 
-        // Check if user has an active session on load
+        // Pull latest users, orders, and active device list from server
+        async function pullFromServer(username = '') {
+            try {
+                const url = username ? `/api/sync?username=${encodeURIComponent(username)}` : '/api/sync';
+                const res = await fetch(url);
+                if (res.ok) {
+                    const serverData = await res.json();
+                    localStorage.setItem('mujaddidiUsers', JSON.stringify(serverData.users || []));
+                    localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(serverData.orders || []));
+                    return serverData.activeDevices || [];
+                }
+            } catch (e) {
+                console.warn('Server offline; using local cache.');
+            }
+            return [];
+        }
+
         const activeUser = localStorage.getItem('activeUserSession');
+        let currentDevices = await pullFromServer(activeUser || '');
+
+        // If logged in locally, verify this device wasn't logged out remotely from another device
+        if (activeUser && currentDevices.length > 0 && !currentDevices.some(d => d.deviceId === deviceId)) {
+            localStorage.removeItem('activeUserSession');
+            alert("You were logged out from another device.");
+            window.location.reload();
+            return;
+        }
+
         if (activeUser) {
-            displayDashboard(activeUser);
+            displayDashboard(activeUser, currentDevices);
             if (typeof renderOrderHistory === 'function') renderOrderHistory();
         } else {
             if (typeof renderOrderHistory === 'function') renderOrderHistory();
@@ -419,24 +426,23 @@
 
                 await pullFromServer();
                 let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
-                const userExists = usersDatabase.some(u => u.username.toLowerCase() === username.toLowerCase());
+                const userExists = usersDatabase.some(
+                    u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === email.toLowerCase()
+                );
 
                 if (userExists) {
-                    alert("Username is already registered!");
+                    alert("Username or Email is already registered! Please log in.");
                     return;
                 }
 
                 usersDatabase.push({ username: username, email: email, password: password });
                 localStorage.setItem('mujaddidiUsers', JSON.stringify(usersDatabase));
 
-                // Push updated users list to server for all other devices
-                try {
-                    await fetch('/api/sync/users', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ users: usersDatabase })
-                    });
-                } catch (err) { }
+                await fetch('/api/sync/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ users: usersDatabase })
+                });
 
                 alert("Registration Successful! Please log in.");
                 regForm.reset();
@@ -444,7 +450,7 @@
             });
         }
 
-        // 2. LOGIN CONTROLLER
+        // 2. LOGIN CONTROLLER (Supports Username OR Email across any device)
         if (loginForm) {
             loginForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
@@ -453,47 +459,100 @@
 
                 await pullFromServer();
                 let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
-                const matchedUser = usersDatabase.find(u => u.username.toLowerCase() === usernameInput.toLowerCase() && u.password === passwordInput);
+                const matchedUser = usersDatabase.find(
+                    u => (u.username.toLowerCase() === usernameInput.toLowerCase() || u.email.toLowerCase() === usernameInput.toLowerCase()) && u.password === passwordInput
+                );
 
                 if (matchedUser) {
-                    alert("Login Successful! Welcome back.");
                     localStorage.setItem('activeUserSession', matchedUser.username);
+
+                    // Register this device session on the server
+                    const sessRes = await fetch('/api/session/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username: matchedUser.username,
+                            deviceId: deviceId,
+                            deviceName: getDeviceLabel()
+                        })
+                    });
+                    const sessData = sessRes.ok ? await sessRes.json() : { activeDevices: [] };
+
+                    alert("Login Successful! Welcome back.");
                     loginForm.reset();
-                    displayDashboard(matchedUser.username);
+                    displayDashboard(matchedUser.username, sessData.activeDevices || []);
                     if (typeof renderOrderHistory === 'function') renderOrderHistory();
                 } else {
-                    alert("Invalid Username or Password.");
+                    alert("Invalid Username/Email or Password.");
                 }
             });
         }
 
-        // 3. PROFILE DASHBOARD PANELS
-        function displayDashboard(username) {
+        // 3. PROFILE DASHBOARD PANELS (With Active Device Counter)
+        function displayDashboard(username, devicesList = []) {
             if (!formContainer) return;
 
             const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-            const personalOrders = centralOrders.filter(order => order.customer && order.customer.accountUser && order.customer.accountUser.toLowerCase() === username.toLowerCase());
+            const personalOrders = centralOrders.filter(
+                order => order.customer && order.customer.accountUser && order.customer.accountUser.toLowerCase() === username.toLowerCase()
+            );
+
+            const deviceCount = Math.max(1, devicesList.length);
+            const devicesHtml = devicesList.map(d =>
+                `<li style="margin: 3px 0;">${d.deviceName} ${d.deviceId === deviceId ? '<strong style="color:#051532;">(This Device)</strong>' : ''}</li>`
+            ).join('');
 
             formContainer.style.height = "auto";
-            formContainer.style.minHeight = "350px";
+            formContainer.style.minHeight = "380px";
             formContainer.style.padding = "25px 20px";
 
             formContainer.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; width: 100%; font-family: sans-serif;">
             <i class="fa fa-user-circle" style="font-size: 50px; color: #051532; margin-bottom: 10px;"></i>
             <h3 style="color: #051532; margin: 0; font-size: 14px;">Assalamu Alaikum,</h3>
-            <h2 style="color: #eba345; margin: 0 0 15px 0; font-size: 18px; text-transform: capitalize;">${username}</h2>
-            <p style="color:#555; font-size:12px;">Total Orders Placed: <strong>${personalOrders.length}</strong></p>
-            <button id="logoutBtn" style="width: 100%; background-color: #051532; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 25px;">Logout</button>
+            <h2 style="color: #eba345; margin: 0 0 12px 0; font-size: 18px; text-transform: capitalize;">${username}</h2>
+            <p style="color:#555; font-size:12px; margin: 4px 0;">Total Orders Placed: <strong>${personalOrders.length}</strong></p>
+            <div style="width: 100%; background: #fdfaf4; border: 1px solid #eba345; border-radius: 5px; padding: 10px; margin-top: 12px; text-align: left;">
+                <p style="color:#051532; font-size:12px; margin: 0 0 5px 0; font-weight: bold;">
+                    <i class="fa fa-laptop"></i> Logged in on ${deviceCount} ${deviceCount === 1 ? 'device' : 'devices'}
+                </p>
+                <ul style="margin: 0; padding-left: 16px; font-size: 11px; color: #555;">
+                    ${devicesHtml || '<li>Current Browser (This Device)</li>'}
+                </ul>
+                ${deviceCount > 1 ? `<button id="logoutOthersBtn" style="margin-top: 8px; background: #eba345; color: #051532; border: none; padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 3px; cursor: pointer; width: 100%;">Log Out Other Devices</button>` : ''}
+            </div>
+            <button id="logoutBtn" style="width: 100%; background-color: #051532; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px;">Logout</button>
         </div>`;
 
-            document.getElementById('logoutBtn').addEventListener('click', function () {
+            const logoutOthersBtn = document.getElementById('logoutOthersBtn');
+            if (logoutOthersBtn) {
+                logoutOthersBtn.addEventListener('click', async function () {
+                    const res = await fetch('/api/session/logout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, deviceId, logoutOthers: true })
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        alert("All other devices have been logged out.");
+                        displayDashboard(username, data.activeDevices);
+                    }
+                });
+            }
+
+            document.getElementById('logoutBtn').addEventListener('click', async function () {
                 if (confirm("Are you sure you want to log out?")) {
+                    await fetch('/api/session/logout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, deviceId, logoutOthers: false })
+                    });
                     localStorage.removeItem('activeUserSession');
                     window.location.reload();
                 }
             });
         }
+
 
         // 4. LOWER CHRONOLOGICAL TIMELINE INVOICES (WITH RED CANCEL OVERRIDE)
         function renderOrderHistory() {
@@ -1314,6 +1373,8 @@
         });
     });
 </script>
+
+<script src="server.js"></script>
 
 </body>
 

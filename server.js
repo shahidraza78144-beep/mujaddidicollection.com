@@ -22,27 +22,36 @@ const mailTransporter = nodemailer.createTransport({
 });
 
 // ==========================================
-// 2. CROSS-DEVICE LOGIN, REGISTER & ORDER SYNC
+// 2. CROSS-DEVICE LOGIN, REGISTER, ORDERS & DEVICE SESSIONS
 // ==========================================
 const DB_FILE = path.join(__dirname, 'database.json');
 
 function readDB() {
     if (!fs.existsSync(DB_FILE)) {
-        fs.writeFileSync(DB_FILE, JSON.stringify({ users: [], orders: [] }, null, 2));
+        fs.writeFileSync(DB_FILE, JSON.stringify({ users: [], orders: [], sessions: {} }, null, 2));
     }
-    return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    if (!data.sessions) data.sessions = {};
+    return data;
 }
 
 function writeDB(data) {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-// Fetch all shared users and orders so any device sees them
+// Fetch all shared users, orders & active device count for a user
 app.get('/api/sync', (req, res) => {
-    res.json(readDB());
+    const db = readDB();
+    const username = (req.query.username || '').trim().toLowerCase();
+    const userSessions = username && db.sessions[username] ? db.sessions[username] : [];
+    res.json({
+        users: db.users,
+        orders: db.orders,
+        activeDevices: userSessions
+    });
 });
 
-// Save newly registered users from any device
+// Register a new user across all devices
 app.post('/api/sync/users', (req, res) => {
     const db = readDB();
     const incomingUsers = req.body.users || [];
@@ -53,6 +62,50 @@ app.post('/api/sync/users', (req, res) => {
     });
     writeDB(db);
     res.json({ success: true, users: db.users });
+});
+
+// Record device login session & return active device count
+app.post('/api/session/login', (req, res) => {
+    const { username, deviceId, deviceName } = req.body;
+    if (!username || !deviceId) return res.status(400).json({ error: 'Missing session info.' });
+
+    const db = readDB();
+    const key = username.trim().toLowerCase();
+    if (!db.sessions[key]) db.sessions[key] = [];
+
+    const existingIdx = db.sessions[key].findIndex(s => s.deviceId === deviceId);
+    const sessionObj = {
+        deviceId,
+        deviceName: deviceName || 'Web Browser',
+        lastActive: new Date().toLocaleString('en-IN')
+    };
+
+    if (existingIdx >= 0) {
+        db.sessions[key][existingIdx] = sessionObj;
+    } else {
+        db.sessions[key].push(sessionObj);
+    }
+
+    writeDB(db);
+    res.json({ success: true, activeDevices: db.sessions[key] });
+});
+
+// Remove device session on logout (or log out all other devices)
+app.post('/api/session/logout', (req, res) => {
+    const { username, deviceId, logoutOthers } = req.body;
+    if (!username) return res.status(400).json({ error: 'Missing username.' });
+
+    const db = readDB();
+    const key = username.trim().toLowerCase();
+    if (db.sessions[key]) {
+        if (logoutOthers && deviceId) {
+            db.sessions[key] = db.sessions[key].filter(s => s.deviceId === deviceId);
+        } else if (deviceId) {
+            db.sessions[key] = db.sessions[key].filter(s => s.deviceId !== deviceId);
+        }
+        writeDB(db);
+    }
+    res.json({ success: true, activeDevices: db.sessions[key] || [] });
 });
 
 // Save orders placed from any device
