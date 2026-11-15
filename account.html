@@ -355,22 +355,58 @@
 
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
         const regForm = document.getElementById('RegForm');
         const loginForm = document.getElementById('LoginForm');
         const formContainer = document.querySelector('.form-container');
         const historyContainer = document.getElementById('orderHistoryContainer');
 
+        // Sync latest users & orders from server so ANY device sees them
+        async function pullFromServer() {
+            try {
+                const res = await fetch('/api/sync');
+                if (res.ok) {
+                    const serverData = await res.json();
+                    const localUsers = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
+                    const localOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+
+                    // Merge server + local without duplicates
+                    const mergedUsers = [...serverData.users];
+                    localUsers.forEach(lu => {
+                        if (!mergedUsers.some(su => su.username.toLowerCase() === lu.username.toLowerCase())) {
+                            mergedUsers.push(lu);
+                        }
+                    });
+
+                    const mergedOrders = [...serverData.orders];
+                    localOrders.forEach(lo => {
+                        if (!mergedOrders.some(so => String(so.orderId) === String(lo.orderId))) {
+                            mergedOrders.push(lo);
+                        }
+                    });
+
+                    localStorage.setItem('mujaddidiUsers', JSON.stringify(mergedUsers));
+                    localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(mergedOrders));
+                }
+            } catch (e) {
+                console.warn('Offline mode: using local browser storage.');
+            }
+        }
+
+        await pullFromServer();
+
         // Check if user has an active session on load
         const activeUser = localStorage.getItem('activeUserSession');
         if (activeUser) {
             displayDashboard(activeUser);
+            if (typeof renderOrderHistory === 'function') renderOrderHistory();
         } else {
-            renderOrderHistory(); // Shows "Login Required" fallback message
+            if (typeof renderOrderHistory === 'function') renderOrderHistory();
         }
+
         // 1. REGISTRATION CONTROLLER
         if (regForm) {
-            regForm.addEventListener('submit', function (e) {
+            regForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const username = regForm.querySelector('input[placeholder="Username"]').value.trim();
                 const email = regForm.querySelector('input[placeholder="Email"]').value.trim();
@@ -381,6 +417,7 @@
                     return;
                 }
 
+                await pullFromServer();
                 let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
                 const userExists = usersDatabase.some(u => u.username.toLowerCase() === username.toLowerCase());
 
@@ -392,6 +429,15 @@
                 usersDatabase.push({ username: username, email: email, password: password });
                 localStorage.setItem('mujaddidiUsers', JSON.stringify(usersDatabase));
 
+                // Push updated users list to server for all other devices
+                try {
+                    await fetch('/api/sync/users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ users: usersDatabase })
+                    });
+                } catch (err) { }
+
                 alert("Registration Successful! Please log in.");
                 regForm.reset();
                 if (typeof login === "function") { login(); }
@@ -400,11 +446,12 @@
 
         // 2. LOGIN CONTROLLER
         if (loginForm) {
-            loginForm.addEventListener('submit', function (e) {
+            loginForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const usernameInput = loginForm.querySelector('input[placeholder="Username"]').value.trim();
                 const passwordInput = loginForm.querySelector('input[placeholder="Password"]').value.trim();
 
+                await pullFromServer();
                 let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
                 const matchedUser = usersDatabase.find(u => u.username.toLowerCase() === usernameInput.toLowerCase() && u.password === passwordInput);
 
@@ -413,31 +460,32 @@
                     localStorage.setItem('activeUserSession', matchedUser.username);
                     loginForm.reset();
                     displayDashboard(matchedUser.username);
-                    renderOrderHistory();
+                    if (typeof renderOrderHistory === 'function') renderOrderHistory();
                 } else {
                     alert("Invalid Username or Password.");
                 }
             });
         }
+
         // 3. PROFILE DASHBOARD PANELS
         function displayDashboard(username) {
             if (!formContainer) return;
 
             const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-            const personalOrders = centralOrders.filter(order => order.customer && order.customer.accountUser.toLowerCase() === username.toLowerCase());
+            const personalOrders = centralOrders.filter(order => order.customer && order.customer.accountUser && order.customer.accountUser.toLowerCase() === username.toLowerCase());
 
             formContainer.style.height = "auto";
             formContainer.style.minHeight = "350px";
             formContainer.style.padding = "25px 20px";
 
             formContainer.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; width: 100%; font-family: sans-serif;">
-                <i class="fa fa-user-circle" style="font-size: 50px; color: #051532; margin-bottom: 10px;"></i>
-                <h3 style="color: #051532; margin: 0; font-size: 14px;">Assalamu Alaikum,</h3>
-                <h2 style="color: #eba345; margin: 0 0 15px 0; font-size: 18px; text-transform: capitalize;">${username}</h2>
-                <p style="color:#555; font-size:12px;">Total Orders Placed: <strong>${personalOrders.length}</strong></p>
-                <button id="logoutBtn" style="width: 100%; background-color: #051532; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 25px;">Logout</button>
-            </div>`;
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%; font-family: sans-serif;">
+            <i class="fa fa-user-circle" style="font-size: 50px; color: #051532; margin-bottom: 10px;"></i>
+            <h3 style="color: #051532; margin: 0; font-size: 14px;">Assalamu Alaikum,</h3>
+            <h2 style="color: #eba345; margin: 0 0 15px 0; font-size: 18px; text-transform: capitalize;">${username}</h2>
+            <p style="color:#555; font-size:12px;">Total Orders Placed: <strong>${personalOrders.length}</strong></p>
+            <button id="logoutBtn" style="width: 100%; background-color: #051532; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 25px;">Logout</button>
+        </div>`;
 
             document.getElementById('logoutBtn').addEventListener('click', function () {
                 if (confirm("Are you sure you want to log out?")) {
@@ -446,6 +494,7 @@
                 }
             });
         }
+
         // 4. LOWER CHRONOLOGICAL TIMELINE INVOICES (WITH RED CANCEL OVERRIDE)
         function renderOrderHistory() {
             if (!historyContainer) return;
@@ -477,45 +526,52 @@
             let historyHtml = '';
             userOrders.forEach((order) => {
                 let orderStatus = order.status || 'Placed';
-                let isCancelled = (orderStatus === 'Cancelled');
+                let isCancelled = (orderStatus === 'Cancelled' || orderStatus === 'Cancelled - by Mujaddidi Collection Seller');
 
+                // 1. Automatically advance status over 15 days if not cancelled
+                if (!isCancelled && order.date) {
+                    let placedDate = new Date(order.date);
+                    if (!isNaN(placedDate.getTime())) {
+                        let now = new Date();
+                        let daysPassed = Math.floor((now - placedDate) / (1000 * 60 * 60 * 24));
+
+                        if (daysPassed >= 15) {
+                            orderStatus = 'Delivered';
+                        } else if (daysPassed >= 12) {
+                            orderStatus = 'Out for Delivery';
+                        } else if (daysPassed >= 7) {
+                            orderStatus = 'Processing';
+                        } else if (daysPassed >= 3) {
+                            orderStatus = 'Shipped';
+                        } else {
+                            orderStatus = 'Placed';
+                        }
+                    }
+                }
+
+                // 2. Build Action Buttons (Cancel/Return + Print Receipt — hidden when cancelled)
                 let actionButtonHtml = '';
 
-                // 1. Maintain your dynamic status controls
-                if (orderStatus === 'Placed' || orderStatus === 'Shipped' || orderStatus === 'Processing' || orderStatus === 'In Transit') {
-                    actionButtonHtml = `<button onclick="cancelUserOrder(${order.orderId})" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
-                } else if (orderStatus === 'Delivered') {
-                    actionButtonHtml = `<button onclick="returnExchangeOrder(${order.orderId})" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
-                } else {
-                    actionButtonHtml = `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${orderStatus} State</span>`;
+                if (!isCancelled) {
+                    if (orderStatus === 'Placed' || orderStatus === 'Shipped' || orderStatus === 'Processing' || orderStatus === 'Out for Delivery' || orderStatus === 'In Transit') {
+                        actionButtonHtml = `<button onclick="cancelUserOrder('${order.orderId}')" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
+                    } else if (orderStatus === 'Delivered') {
+                        actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
+                    }
+
+                    // Append Print Receipt button for all non-cancelled orders
+                    actionButtonHtml += `
+                <button class="print-receipt-btn" onclick="triggerReceiptPrint(this)" 
+                        data-order-id="${order.orderId}" 
+                        data-date="${order.date || 'N/A'}" 
+                        data-total="${order.totalAmount || 0}" 
+                        data-address="${order.shippingAddress || 'No Address Recorded'}" 
+                        style="background: #eba345; color: #051532; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; transition: 0.2s; text-transform: uppercase;">
+                    <i class="fa fa-print"></i> Print Receipt
+                </button>`;
                 }
 
-                // 2. THE CHOSEN TEMPLATE PRINT BUTTON COMPONENT (Appended underneath or next to buttons)
-                actionButtonHtml += `
-            <button class="print-receipt-btn" onclick="triggerReceiptPrint(this)" 
-                    data-order-id="${order.orderId}" 
-                    data-date="${order.date || 'N/A'}" 
-                    data-total="${order.totalAmount || 0}" 
-                    data-address="${order.shippingAddress || 'No Address Recorded'}" 
-                    style="background: #eba345; color: #051532; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; transition: 0.2s; text-transform: uppercase;">
-                <i class="fa fa-print"></i> Print Receipt
-            </button>`;
-
-
-
-                if (orderStatus === 'Placed') {
-                    // Show Red Cancel button for active orders
-                    actionButtonHtml = `<button onclick="cancelUserOrder(${order.orderId})" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
-                } else if (orderStatus === 'Delivered') {
-                    // Automatically swap to Dark Blue Return/Exchange button once delivered
-                    actionButtonHtml = `<button onclick="returnExchangeOrder(${order.orderId})" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
-                }
-                else {
-                    // Placeholder text if the order is already Cancelled or Return Requested
-                    ctionButtonHtml = `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${orderStatus} State</span>`;
-                }
-
-                // Calculate 15-days future arrival date
+                // 3. Calculate 15-days future arrival date
                 let estimatedDeliveryDate = order.deliveryDate;
                 if (!estimatedDeliveryDate && order.date) {
                     let placementDate = new Date(order.date);
@@ -529,18 +585,21 @@
                     estimatedDeliveryDate = "15 Days from booking";
                 }
 
-                // Map tracking bar indices
-                const statesArray = ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
+                // 4. Map tracking bar indices
+                const statesArray = isCancelled
+                    ? ["Placed", "Shipped", "Processing", "Out for Delivery", "Cancelled"]
+                    : ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
+
                 let activeIndex = statesArray.indexOf(orderStatus);
                 if (activeIndex === -1) activeIndex = 0;
 
-                // Determine tracking fill widths and color rules dynamically
+                // 5. Determine tracking fill widths and color rules dynamically
                 let fillWidth = isCancelled ? 100 : (activeIndex / (statesArray.length - 1)) * 100;
-                let themeLineColor = isCancelled ? '#c5221f' : '#eba345'; // Switches to Red if Cancelled
+                let themeLineColor = isCancelled ? '#c5221f' : '#eba345';
 
                 let badgeBg = '#fff3cd'; let badgeColor = '#b06000';
                 if (orderStatus === 'Delivered') { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
-                if (orderStatus === 'Cancelled') { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
+                if (isCancelled) { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
 
                 // Loop to draw the 5 small circle nodes on the progress tracking track line
                 let timelineStepsHtml = '';
@@ -668,6 +727,246 @@
     };
 
 </script>
+
+<!-- PART 2: RECEIPT PRINT GENERATION CONTROLLER -->
+<script>
+    function triggerReceiptPrint(buttonElement) {
+        // 1. Fetch metadata properties tied directly to the clicked card button instance
+        const id = buttonElement.getAttribute("data-order-id");
+        const date = buttonElement.getAttribute("data-date");
+        const total = buttonElement.getAttribute("data-total");
+        const address = buttonElement.getAttribute("data-address");
+
+        // Try to find the items list attached to this specific order from the master storage log
+        const activeUser = localStorage.getItem('activeUserSession') || "Guest";
+        const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+        const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
+        const itemsArray = matchedOrder.items || [];
+
+        // Generate table rows dynamically for each purchased product item inside the cart array
+        let itemsTableRowsHTML = "";
+        if (itemsArray.length > 0) {
+            itemsTableRowsHTML = itemsArray.map(item => `
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${item.name || item.title || 'Product Item'}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">${item.quantity || 1}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(item.price || 0).toFixed(2)}</td>
+            </tr>
+        `).join('');
+        } else {
+            // Fallback row entry description line if explicit array mappings are missing from old caches
+            itemsTableRowsHTML = `
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${matchedOrder.itemsDescription || 'Standard Collection Purchase'}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">1</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(total).toFixed(2)}</td>
+            </tr>`;
+        }
+
+        // 2. Open a hidden temporary browser context print pipeline window
+        const printWindow = window.open('', '_blank', 'width=800,height=700');
+
+        // 3. Inject your theme design framework directly into the print page context template layout
+        printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Receipt_MJD-${id}</title>
+            <style>
+                body { font-family: sans-serif; margin: 0; padding: 40px; color: #333; background: #fff; }
+                .invoice-box { max-width: 700px; margin: auto; padding: 30px; border: 1px solid #eee; border-top: 8px solid #051532; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.02); }
+                .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+                .brand-title { color: #051532; font-size: 26px; font-weight: bold; margin: 0; }
+                .brand-title span { color: #eba345; }
+                .meta-info { text-align: right; font-size: 13px; color: #555; line-height: 1.5; }
+                .section-title { font-size: 12px; font-weight: bold; color: #051532; text-transform: uppercase; margin-bottom: 8px; border-bottom: 2px solid #eba345; padding-bottom: 4px; letter-spacing: 0.5px; }
+                .address-block { background: #fdfaf4; padding: 15px; border-radius: 4px; font-size: 13px; line-height: 1.6; margin-bottom: 30px; color: #444; border-left: 3px solid #051532; }
+                table { width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 30px; }
+                th { background: #051532; color: #fff; padding: 10px; font-size: 12px; text-transform: uppercase; font-weight: bold; }
+                .total-row td { padding: 12px 10px; font-size: 15px; font-weight: bold; color: #051532; background: #fdfaf4; border-top: 2px solid #051532; }
+                .footer-note { text-align: center; font-size: 12px; color: #777; margin-top: 40px; border-top: 1px dashed #ddd; padding-top: 15px; }
+                @print { body { padding: 0; } .invoice-box { border: none; box-shadow: none; } }
+            </style>
+        </head>
+        <body>
+            <div class="invoice-box">
+                <!-- Branding header lines layout -->
+                <div class="header-row">
+                    <div>
+                        <h1 class="brand-title">Mujaddidi <span>Collection</span></h1>
+                        <p style="font-size: 12px; color: #777; margin: 5px 0 0 0;">Premium Traditional Apparel & Essentials</p>
+                    </div>
+                    <div class="meta-info">
+                        <strong style="color: #051532; font-size: 14px;">INVOICE RECEIPT</strong><br>
+                        Invoice ID: #MJD-${id}<br>
+                        Order Date: ${date}<br>
+                        Account User: <span style="text-transform: capitalize;">${activeUser}</span>
+                    </div>
+                </div>
+
+                <!-- Shipping location detail block metrics -->
+                <div class="section-title">Delivery Destination</div>
+                <div class="address-block">
+                    ${address.replace(/, Ph:/g, '<br>Phone:').replace(/ - /g, '<br>PIN Code: ')}
+                </div>
+
+                <!-- Transaction product details grid tables -->
+                <div class="section-title">Order Items Summary</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="border-top-left-radius: 4px;">Item Description</th>
+                            <th style="text-align: center; width: 80px;">Qty</th>
+                            <th style="text-align: right; width: 120px; border-top-right-radius: 4px;">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsTableRowsHTML}
+                        <tr class="total-row">
+                            <td colspan="2" style="text-align: right; border-bottom-left-radius: 4px;">Grand Total Summary:</td>
+                            <td style="text-align: right; color: #eba345; border-bottom-right-radius: 4px;">₹${parseFloat(total).toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Formal complimentary card footer closure lines -->
+                <div class="footer-note">
+                    <strong>Thank you for shopping with Mujaddidi Collection!</strong><br>
+                    This is an automatically generated system electronic invoice receipt documentation record.
+                </div>
+            </div>
+
+            <!-- Auto-start the browser hardware layout printing commands engine natively -->
+            <script>
+                window.onload = function() {
+                    window.print();
+                    // Close the extra blank template context page cleanly when printing finishes
+                    setTimeout(function() { window.close(); }, 500);
+                };
+            `);
+
+        // Cleanly close out document write data processing queues
+        printWindow.document.close();
+    }
+    // PART 2: RECEIPT PRINT GENERATION CONTROLLER 
+    window.triggerReceiptPrint = function (buttonElement) {
+        // 1. Fetch metadata properties tied directly to the clicked card button instance
+        const id = buttonElement.getAttribute("data-order-id");
+        const date = buttonElement.getAttribute("data-date");
+        const total = buttonElement.getAttribute("data-total");
+        const address = buttonElement.getAttribute("data-address");
+
+        // Try to find the items list attached to this specific order from the master storage log
+        const activeUser = localStorage.getItem('activeUserSession') || "Guest";
+        const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+        const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
+        const itemsArray = matchedOrder.items || [];
+
+        // Generate table rows dynamically for each purchased product item inside the cart array
+        let itemsTableRowsHTML = "";
+        if (itemsArray.length > 0) {
+            itemsTableRowsHTML = itemsArray.map(item => `
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${item.name || item.title || 'Product Item'}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">${item.quantity || item.qty || 1}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(item.price || 0).toFixed(2)}</td>
+            </tr>
+        `).join('');
+        } else {
+            // Fallback row entry description line if explicit array mappings are missing from old caches
+            itemsTableRowsHTML = `
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${matchedOrder.itemsDescription || 'Standard Collection Purchase'}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">1</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(total).toFixed(2)}</td>
+            </tr>`;
+        }
+
+        // 2. Open a hidden temporary browser context print pipeline window
+        const printWindow = window.open('', '_blank', 'width=800,height=700');
+
+        // 3. Inject your theme design framework directly into the print page context template layout
+        printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Receipt_MJD-${id}</title>
+            <style>
+                body { font-family: sans-serif; margin: 0; padding: 40px; color: #333; background: #fff; }
+                .invoice-box { max-width: 700px; margin: auto; padding: 30px; border: 1px solid #eee; border-top: 8px solid #051532; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.02); }
+                .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+                .brand-title { color: #051532; font-size: 26px; font-weight: bold; margin: 0; }
+                .brand-title span { color: #eba345; }
+                .meta-info { text-align: right; font-size: 13px; color: #555; line-height: 1.5; }
+                .section-title { font-size: 12px; font-weight: bold; color: #051532; text-transform: uppercase; margin-bottom: 8px; border-bottom: 2px solid #eba345; padding-bottom: 4px; letter-spacing: 0.5px; }
+                .address-block { background: #fdfaf4; padding: 15px; border-radius: 4px; font-size: 13px; line-height: 1.6; margin-bottom: 30px; color: #444; border-left: 3px solid #051532; }
+                table { width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 30px; }
+                th { background: #051532; color: #fff; padding: 10px; font-size: 12px; text-transform: uppercase; font-weight: bold; }
+                .total-row td { padding: 12px 10px; font-size: 15px; font-weight: bold; color: #051532; background: #fdfaf4; border-top: 2px solid #051532; }
+                .footer-note { text-align: center; font-size: 12px; color: #777; margin-top: 40px; border-top: 1px dashed #ddd; padding-top: 15px; }
+                @media print { body { padding: 0; } .invoice-box { border: none; box-shadow: none; } }
+            </style>
+        </head>
+        <body>
+            <div class="invoice-box">
+                <div class="header-row">
+                    <div>
+                        <h1 class="brand-title">Mujaddidi <span>Collection</span></h1>
+                        <p style="font-size: 12px; color: #777; margin: 5px 0 0 0;">Premium Traditional Apparel & Essentials</p>
+                    </div>
+                    <div class="meta-info">
+                        <strong style="color: #051532; font-size: 14px;">INVOICE RECEIPT</strong><br>
+                        Invoice ID: #MJD-${id}<br>
+                        Order Date: ${date}<br>
+                        Account User: <span style="text-transform: capitalize;">${activeUser}</span>
+                    </div>
+                </div>
+
+                <div class="section-title">Delivery Destination</div>
+                <div class="address-block">
+                    ${address.replace(/, Ph:/g, '<br>Phone:').replace(/ - /g, '<br>PIN Code: ')}
+                </div>
+
+                <div class="section-title">Order Items Summary</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="border-top-left-radius: 4px;">Item Description</th>
+                            <th style="text-align: center; width: 80px;">Qty</th>
+                            <th style="text-align: right; width: 120px; border-top-right-radius: 4px;">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsTableRowsHTML}
+                        <tr class="total-row">
+                            <td colspan="2" style="text-align: right; border-bottom-left-radius: 4px;">Grand Total Summary:</td>
+                            <td style="text-align: right; color: #eba345; border-bottom-right-radius: 4px;">₹${parseFloat(total).toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="footer-note">
+                    <strong>Thank you for shopping with Mujaddidi Collection!</strong><br>
+                    This is an automatically generated system electronic invoice receipt documentation record.
+                </div>
+            </div>
+
+            <script>
+                window.onload = function() {
+                    window.print();
+                    setTimeout(function() { window.close(); }, 500);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+
+        printWindow.document.close();
+    };
+
+</script>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // 1. Identify which account profile username dashboard is open
@@ -1015,246 +1314,6 @@
         });
     });
 </script>
-<!-- PART 2: RECEIPT PRINT GENERATION CONTROLLER -->
-<script>
-    function triggerReceiptPrint(buttonElement) {
-        // 1. Fetch metadata properties tied directly to the clicked card button instance
-        const id = buttonElement.getAttribute("data-order-id");
-        const date = buttonElement.getAttribute("data-date");
-        const total = buttonElement.getAttribute("data-total");
-        const address = buttonElement.getAttribute("data-address");
-
-        // Try to find the items list attached to this specific order from the master storage log
-        const activeUser = localStorage.getItem('activeUserSession') || "Guest";
-        const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-        const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
-        const itemsArray = matchedOrder.items || [];
-
-        // Generate table rows dynamically for each purchased product item inside the cart array
-        let itemsTableRowsHTML = "";
-        if (itemsArray.length > 0) {
-            itemsTableRowsHTML = itemsArray.map(item => `
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${item.name || item.title || 'Product Item'}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">${item.quantity || 1}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(item.price || 0).toFixed(2)}</td>
-            </tr>
-        `).join('');
-        } else {
-            // Fallback row entry description line if explicit array mappings are missing from old caches
-            itemsTableRowsHTML = `
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${matchedOrder.itemsDescription || 'Standard Collection Purchase'}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">1</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(total).toFixed(2)}</td>
-            </tr>`;
-        }
-
-        // 2. Open a hidden temporary browser context print pipeline window
-        const printWindow = window.open('', '_blank', 'width=800,height=700');
-
-        // 3. Inject your theme design framework directly into the print page context template layout
-        printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Receipt_MJD-${id}</title>
-            <style>
-                body { font-family: sans-serif; margin: 0; padding: 40px; color: #333; background: #fff; }
-                .invoice-box { max-width: 700px; margin: auto; padding: 30px; border: 1px solid #eee; border-top: 8px solid #051532; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.02); }
-                .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-                .brand-title { color: #051532; font-size: 26px; font-weight: bold; margin: 0; }
-                .brand-title span { color: #eba345; }
-                .meta-info { text-align: right; font-size: 13px; color: #555; line-height: 1.5; }
-                .section-title { font-size: 12px; font-weight: bold; color: #051532; text-transform: uppercase; margin-bottom: 8px; border-bottom: 2px solid #eba345; padding-bottom: 4px; letter-spacing: 0.5px; }
-                .address-block { background: #fdfaf4; padding: 15px; border-radius: 4px; font-size: 13px; line-height: 1.6; margin-bottom: 30px; color: #444; border-left: 3px solid #051532; }
-                table { width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 30px; }
-                th { background: #051532; color: #fff; padding: 10px; font-size: 12px; text-transform: uppercase; font-weight: bold; }
-                .total-row td { padding: 12px 10px; font-size: 15px; font-weight: bold; color: #051532; background: #fdfaf4; border-top: 2px solid #051532; }
-                .footer-note { text-align: center; font-size: 12px; color: #777; margin-top: 40px; border-top: 1px dashed #ddd; padding-top: 15px; }
-                @print { body { padding: 0; } .invoice-box { border: none; box-shadow: none; } }
-            </style>
-        </head>
-        <body>
-            <div class="invoice-box">
-                <!-- Branding header lines layout -->
-                <div class="header-row">
-                    <div>
-                        <h1 class="brand-title">Mujaddidi <span>Collection</span></h1>
-                        <p style="font-size: 12px; color: #777; margin: 5px 0 0 0;">Premium Traditional Apparel & Essentials</p>
-                    </div>
-                    <div class="meta-info">
-                        <strong style="color: #051532; font-size: 14px;">INVOICE RECEIPT</strong><br>
-                        Invoice ID: #MJD-${id}<br>
-                        Order Date: ${date}<br>
-                        Account User: <span style="text-transform: capitalize;">${activeUser}</span>
-                    </div>
-                </div>
-
-                <!-- Shipping location detail block metrics -->
-                <div class="section-title">Delivery Destination</div>
-                <div class="address-block">
-                    ${address.replace(/, Ph:/g, '<br>Phone:').replace(/ - /g, '<br>PIN Code: ')}
-                </div>
-
-                <!-- Transaction product details grid tables -->
-                <div class="section-title">Order Items Summary</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="border-top-left-radius: 4px;">Item Description</th>
-                            <th style="text-align: center; width: 80px;">Qty</th>
-                            <th style="text-align: right; width: 120px; border-top-right-radius: 4px;">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsTableRowsHTML}
-                        <tr class="total-row">
-                            <td colspan="2" style="text-align: right; border-bottom-left-radius: 4px;">Grand Total Summary:</td>
-                            <td style="text-align: right; color: #eba345; border-bottom-right-radius: 4px;">₹${parseFloat(total).toFixed(2)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Formal complimentary card footer closure lines -->
-                <div class="footer-note">
-                    <strong>Thank you for shopping with Mujaddidi Collection!</strong><br>
-                    This is an automatically generated system electronic invoice receipt documentation record.
-                </div>
-            </div>
-
-            <!-- Auto-start the browser hardware layout printing commands engine natively -->
-            <script>
-                window.onload = function() {
-                    window.print();
-                    // Close the extra blank template context page cleanly when printing finishes
-                    setTimeout(function() { window.close(); }, 500);
-                };
-            `);
-
-        // Cleanly close out document write data processing queues
-        printWindow.document.close();
-    }
-    // PART 2: RECEIPT PRINT GENERATION CONTROLLER 
-    window.triggerReceiptPrint = function (buttonElement) {
-        // 1. Fetch metadata properties tied directly to the clicked card button instance
-        const id = buttonElement.getAttribute("data-order-id");
-        const date = buttonElement.getAttribute("data-date");
-        const total = buttonElement.getAttribute("data-total");
-        const address = buttonElement.getAttribute("data-address");
-
-        // Try to find the items list attached to this specific order from the master storage log
-        const activeUser = localStorage.getItem('activeUserSession') || "Guest";
-        const centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-        const matchedOrder = centralQueue.find(o => String(o.orderId) === String(id)) || {};
-        const itemsArray = matchedOrder.items || [];
-
-        // Generate table rows dynamically for each purchased product item inside the cart array
-        let itemsTableRowsHTML = "";
-        if (itemsArray.length > 0) {
-            itemsTableRowsHTML = itemsArray.map(item => `
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${item.name || item.title || 'Product Item'}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">${item.quantity || item.qty || 1}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(item.price || 0).toFixed(2)}</td>
-            </tr>
-        `).join('');
-        } else {
-            // Fallback row entry description line if explicit array mappings are missing from old caches
-            itemsTableRowsHTML = `
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${matchedOrder.itemsDescription || 'Standard Collection Purchase'}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: center;">1</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; text-align: right;">₹${parseFloat(total).toFixed(2)}</td>
-            </tr>`;
-        }
-
-        // 2. Open a hidden temporary browser context print pipeline window
-        const printWindow = window.open('', '_blank', 'width=800,height=700');
-
-        // 3. Inject your theme design framework directly into the print page context template layout
-        printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Receipt_MJD-${id}</title>
-            <style>
-                body { font-family: sans-serif; margin: 0; padding: 40px; color: #333; background: #fff; }
-                .invoice-box { max-width: 700px; margin: auto; padding: 30px; border: 1px solid #eee; border-top: 8px solid #051532; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.02); }
-                .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-                .brand-title { color: #051532; font-size: 26px; font-weight: bold; margin: 0; }
-                .brand-title span { color: #eba345; }
-                .meta-info { text-align: right; font-size: 13px; color: #555; line-height: 1.5; }
-                .section-title { font-size: 12px; font-weight: bold; color: #051532; text-transform: uppercase; margin-bottom: 8px; border-bottom: 2px solid #eba345; padding-bottom: 4px; letter-spacing: 0.5px; }
-                .address-block { background: #fdfaf4; padding: 15px; border-radius: 4px; font-size: 13px; line-height: 1.6; margin-bottom: 30px; color: #444; border-left: 3px solid #051532; }
-                table { width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 30px; }
-                th { background: #051532; color: #fff; padding: 10px; font-size: 12px; text-transform: uppercase; font-weight: bold; }
-                .total-row td { padding: 12px 10px; font-size: 15px; font-weight: bold; color: #051532; background: #fdfaf4; border-top: 2px solid #051532; }
-                .footer-note { text-align: center; font-size: 12px; color: #777; margin-top: 40px; border-top: 1px dashed #ddd; padding-top: 15px; }
-                @media print { body { padding: 0; } .invoice-box { border: none; box-shadow: none; } }
-            </style>
-        </head>
-        <body>
-            <div class="invoice-box">
-                <div class="header-row">
-                    <div>
-                        <h1 class="brand-title">Mujaddidi <span>Collection</span></h1>
-                        <p style="font-size: 12px; color: #777; margin: 5px 0 0 0;">Premium Traditional Apparel & Essentials</p>
-                    </div>
-                    <div class="meta-info">
-                        <strong style="color: #051532; font-size: 14px;">INVOICE RECEIPT</strong><br>
-                        Invoice ID: #MJD-${id}<br>
-                        Order Date: ${date}<br>
-                        Account User: <span style="text-transform: capitalize;">${activeUser}</span>
-                    </div>
-                </div>
-
-                <div class="section-title">Delivery Destination</div>
-                <div class="address-block">
-                    ${address.replace(/, Ph:/g, '<br>Phone:').replace(/ - /g, '<br>PIN Code: ')}
-                </div>
-
-                <div class="section-title">Order Items Summary</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="border-top-left-radius: 4px;">Item Description</th>
-                            <th style="text-align: center; width: 80px;">Qty</th>
-                            <th style="text-align: right; width: 120px; border-top-right-radius: 4px;">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsTableRowsHTML}
-                        <tr class="total-row">
-                            <td colspan="2" style="text-align: right; border-bottom-left-radius: 4px;">Grand Total Summary:</td>
-                            <td style="text-align: right; color: #eba345; border-bottom-right-radius: 4px;">₹${parseFloat(total).toFixed(2)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="footer-note">
-                    <strong>Thank you for shopping with Mujaddidi Collection!</strong><br>
-                    This is an automatically generated system electronic invoice receipt documentation record.
-                </div>
-            </div>
-
-            <script>
-                window.onload = function() {
-                    window.print();
-                    setTimeout(function() { window.close(); }, 500);
-                };
-            <\/script>
-        </body>
-        </html>
-    `);
-
-        printWindow.document.close();
-    };
-
-</script>
-
-
-
 
 </body>
 

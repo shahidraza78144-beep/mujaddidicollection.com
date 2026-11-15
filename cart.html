@@ -475,7 +475,7 @@
             checkoutBtn.parentNode.replaceChild(freshCheckoutBtn, checkoutBtn);
 
             // Bind the new instant-order action to the clean button instance
-            freshCheckoutBtn.addEventListener("click", (e) => {
+            freshCheckoutBtn.addEventListener("click", async (e) => {
                 e.preventDefault();
 
                 // 2. Pull products array currently inside the active shopping cart
@@ -486,6 +486,7 @@
                     alert("Your cart is empty! Please add products before checking out.");
                     return;
                 }
+
                 // 3. READ CUSTOM SELECTIONS FROM DYNAMIC DROPDOWNS DIRECTLY
                 const fullName = document.getElementById("directShipName") ? document.getElementById("directShipName").value.trim() : "";
                 const phone = document.getElementById("directShipPhone") ? document.getElementById("directShipPhone").value.trim() : "";
@@ -518,16 +519,18 @@
                 // Convert items arrays to flat lines for a clean layout view on your Admin panel tables
                 const itemsStringSummary = cart.map(i => `${i.name || i.title || 'Product'} (x${i.quantity || 1})`).join(', ');
                 const completeAddressString = `${fullName}, Ph: ${phone}, ${street}, ${city}, ${state} - ${pinCode}`;
+
                 // 7. ASSEMBLE THE MASTER INSTANT INVOICE STRUCTURE Payload
                 const orderPayload = {
                     orderId: generatedId,
                     date: dateFormatted,
                     totalPaid: cumulativeTotal,
-                    totalAmount: cumulativeTotal, // Safety duplicate variable matching admin dashboards
+                    totalAmount: cumulativeTotal,
                     itemsDescription: itemsStringSummary,
-                    status: "Processing", // Initial workflow status tracking state
+                    status: "Processing",
                     items: cart,
                     customer: {
+                        name: fullName,
                         accountUser: loggedInUser
                     },
                     shippingAddress: completeAddressString
@@ -537,6 +540,17 @@
                 let centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
                 centralQueue.unshift(orderPayload);
                 localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralQueue));
+
+                // Sync new order with server database so ALL devices & admin.html see it immediately
+                try {
+                    await fetch('/api/sync/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orders: centralQueue })
+                    });
+                } catch (err) {
+                    console.warn('Order saved locally; server sync pending.');
+                }
 
                 // 9. FLUSH ACTIVE SHOPPING CART MEMORY CACHES COMPLETELY
                 localStorage.removeItem("mujaddidi_cart");
