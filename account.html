@@ -359,6 +359,7 @@
         const regForm = document.getElementById('RegForm');
         const loginForm = document.getElementById('LoginForm');
         const formContainer = document.querySelector('.form-container');
+        const historyContainer = document.getElementById('orderHistoryContainer');
 
         // Generate or retrieve a persistent unique ID for this browser/device
         let deviceId = localStorage.getItem('mujaddidiDeviceId');
@@ -552,7 +553,6 @@
                 }
             });
         }
-
 
         // 4. LOWER CHRONOLOGICAL TIMELINE INVOICES (WITH RED CANCEL OVERRIDE)
         function renderOrderHistory() {
