@@ -50,16 +50,51 @@ window.CloudDB = {
             if (!res.ok) return { users: [], orders: [], activeDevices: [], allSessions: {}, activityLog: [] };
 
             const data = (await res.json()) || {};
-            const users = data.users ? Object.values(data.users) : [];
-            const orders = data.orders
-                ? Object.values(data.orders).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+
+            // Filter out any null entries & normalize users
+            const users = data.users
+                ? Object.values(data.users).filter(u => u && u.username)
                 : [];
+
+            // Normalize every order so admin.html & account.html always render every row cleanly
+            const rawOrders = data.orders ? Object.values(data.orders).filter(Boolean) : [];
+            const orders = rawOrders
+                .map(o => {
+                    const normalizedItems = Array.isArray(o.items)
+                        ? o.items
+                        : (o.items && typeof o.items === 'object' ? Object.values(o.items) : []);
+
+                    const safeCustomer = (o.customer && typeof o.customer === 'object')
+                        ? o.customer
+                        : { accountUser: o.accountUser || 'Guest', name: o.customerName || 'Customer' };
+
+                    if (!safeCustomer.accountUser) safeCustomer.accountUser = 'Guest';
+                    if (!safeCustomer.name) safeCustomer.name = safeCustomer.accountUser;
+
+                    const fallbackSummary = normalizedItems
+                        .map(i => `${i.name || i.title || 'Product'} (x${i.quantity || i.qty || 1})`)
+                        .join(', ');
+
+                    return {
+                        ...o,
+                        orderId: o.orderId || '000000',
+                        date: o.date || 'N/A',
+                        items: normalizedItems,
+                        itemsDescription: o.itemsDescription || fallbackSummary || 'Collection Order',
+                        customer: safeCustomer,
+                        shippingAddress: o.shippingAddress || o.address || 'Address Not Provided',
+                        totalPaid: parseFloat(o.totalPaid || o.totalAmount || 0),
+                        totalAmount: parseFloat(o.totalAmount || o.totalPaid || 0),
+                        status: o.status || 'Processing'
+                    };
+                })
+                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
             const activityLog = data.activityLog
-                ? Object.values(data.activityLog).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                ? Object.values(data.activityLog).filter(Boolean).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
                 : [];
             const allSessions = data.sessions || {};
 
-            // Restore localStorage mirror even if the user cleared their browser history
             localStorage.setItem('mujaddidiUsers', JSON.stringify(users));
             localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(orders));
             localStorage.setItem('mujaddidiActivityLog', JSON.stringify(activityLog));
@@ -67,7 +102,7 @@ window.CloudDB = {
 
             const key = this.safeKey(username);
             const userSessObj = (key && allSessions[key]) ? allSessions[key] : {};
-            const activeDevices = Object.values(userSessObj).filter(s => s.status === 'Active');
+            const activeDevices = Object.values(userSessObj).filter(s => s && s.status === 'Active');
 
             return { users, orders, activeDevices, allSessions, activityLog };
         } catch (err) {
@@ -75,6 +110,7 @@ window.CloudDB = {
             return { users: [], orders: [], activeDevices: [], allSessions: {}, activityLog: [] };
         }
     },
+
 
     // Save a newly registered user permanently
     async registerUser(userObj) {
