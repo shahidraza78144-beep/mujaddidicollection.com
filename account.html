@@ -460,15 +460,6 @@
                     )
                 );
 
-                if (window.CloudDB) {
-                    await CloudDB.updateOrder(orderId, {
-                        status: order.status,
-                        returnReason: order.returnReason || '',
-                        requestDate: new Date().toLocaleDateString('en-IN')
-                    });
-                }
-
-
                 if (matchedUser) {
                     localStorage.setItem('activeUserSession', matchedUser.username);
                     const updatedDevices = await CloudDB.loginDevice(matchedUser.username);
