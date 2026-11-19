@@ -1,8 +1,7 @@
-// cloud-db.js — Shared Cloud Database for GitHub Pages (Replaces localStorage across all devices)
-window.FIREBASE_DB_URL = 'https://firebasedatabase.app'; // <-- PASTE YOUR FIREBASE URL HERE (NO SLASH AT END)
+// cloud-db.js — Permanent Cloud Vault for GitHub Pages & Local file:/// (Immune to Browser History Clear)
+window.FIREBASE_DB_URL = 'https://mujaddidi-collection-default-rtdb.asia-southeast1.firebasedatabase.app/'; // <-- PASTE YOUR FIREBASE URL HERE
 
 window.CloudDB = {
-    // Get or create unique ID for the current phone/PC browser
     getDeviceId() {
         let id = localStorage.getItem('mujaddidiDeviceId');
         if (!id) {
@@ -25,86 +24,138 @@ window.CloudDB = {
         return String(str || '').trim().toLowerCase().replace(/[.#$\[\]\/]/g, '_');
     },
 
-    // Pull latest users, orders, and active device sessions from Firebase
+    // Record every user action permanently in Firebase (never deleted)
+    async logActivity(username, action, details = '') {
+        if (!username) return;
+        const entry = {
+            id: 'ACT-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            username: username,
+            action: action, // e.g. 'Registered', 'Logged In', 'Placed Order', 'Cancelled Order', 'Logged Out'
+            details: details,
+            device: this.getDeviceLabel(),
+            time: new Date().toLocaleString('en-IN'),
+            timestamp: Date.now()
+        };
+        await fetch(`${window.FIREBASE_DB_URL}/storeData/activityLog/${entry.id}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(entry)
+        });
+    },
+
+    // Pull all permanent users, orders, sessions, and activity logs from Firebase
     async syncAll(username = '') {
         try {
             const res = await fetch(`${window.FIREBASE_DB_URL}/storeData.json`);
-            if (!res.ok) return { users: [], orders: [], activeDevices: [] };
+            if (!res.ok) return { users: [], orders: [], activeDevices: [], allSessions: {}, activityLog: [] };
 
             const data = (await res.json()) || {};
             const users = data.users ? Object.values(data.users) : [];
             const orders = data.orders
                 ? Object.values(data.orders).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
                 : [];
+            const activityLog = data.activityLog
+                ? Object.values(data.activityLog).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                : [];
+            const allSessions = data.sessions || {};
 
-            // Keep local mirror updated so your existing UI functions read it seamlessly
+            // Restore localStorage mirror even if the user cleared their browser history
             localStorage.setItem('mujaddidiUsers', JSON.stringify(users));
             localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(orders));
+            localStorage.setItem('mujaddidiActivityLog', JSON.stringify(activityLog));
+            localStorage.setItem('mujaddidiAllSessions', JSON.stringify(allSessions));
 
             const key = this.safeKey(username);
-            const sessionsObj = (data.sessions && key && data.sessions[key]) ? data.sessions[key] : {};
-            const activeDevices = Object.values(sessionsObj);
+            const userSessObj = (key && allSessions[key]) ? allSessions[key] : {};
+            const activeDevices = Object.values(userSessObj).filter(s => s.status === 'Active');
 
-            return { users, orders, activeDevices };
+            return { users, orders, activeDevices, allSessions, activityLog };
         } catch (err) {
             console.warn('Cloud sync error:', err);
-            return { users: [], orders: [], activeDevices: [] };
+            return { users: [], orders: [], activeDevices: [], allSessions: {}, activityLog: [] };
         }
     },
 
-    // Save a new registered user to Firebase
+    // Save a newly registered user permanently
     async registerUser(userObj) {
         const key = this.safeKey(userObj.username);
+        userObj.registeredAt = new Date().toLocaleString('en-IN');
+        userObj.accountStatus = 'Registered';
         await fetch(`${window.FIREBASE_DB_URL}/storeData/users/${key}.json`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userObj)
         });
+        await this.logActivity(userObj.username, 'Registered Account', `Email: ${userObj.email}`);
     },
 
-    // Record active device login session in Firebase
+    // Mark device session Active on login (never deletes previous sessions)
     async loginDevice(username) {
         const key = this.safeKey(username);
         const deviceId = this.getDeviceId();
+        const now = new Date().toLocaleString('en-IN');
+
         await fetch(`${window.FIREBASE_DB_URL}/storeData/sessions/${key}/${deviceId}.json`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 deviceId: deviceId,
                 deviceName: this.getDeviceLabel(),
-                lastActive: new Date().toLocaleString('en-IN')
+                status: 'Active',
+                lastActive: now
             })
         });
+
+        await fetch(`${window.FIREBASE_DB_URL}/storeData/users/${key}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accountStatus: 'Active', lastSeen: now })
+        });
+
+        await this.logActivity(username, 'Logged In', `Device: ${this.getDeviceLabel()}`);
         const synced = await this.syncAll(username);
         return synced.activeDevices;
     },
 
-    // Remove current device or log out all other devices
+    // Mark device as "Logged Out" instead of deleting it so Admin always sees the history
     async logoutDevice(username, logoutOthers = false) {
         const key = this.safeKey(username);
         const deviceId = this.getDeviceId();
+        const now = new Date().toLocaleString('en-IN');
+
+        const syncedBefore = await this.syncAll(username);
+        const userSessObj = (syncedBefore.allSessions && syncedBefore.allSessions[key]) || {};
+
         if (logoutOthers) {
-            await fetch(`${window.FIREBASE_DB_URL}/storeData/sessions/${key}.json`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    [deviceId]: {
-                        deviceId: deviceId,
-                        deviceName: this.getDeviceLabel(),
-                        lastActive: new Date().toLocaleString('en-IN')
-                    }
-                })
-            });
+            for (const [devKey, devInfo] of Object.entries(userSessObj)) {
+                if (devKey !== deviceId) {
+                    await fetch(`${window.FIREBASE_DB_URL}/storeData/sessions/${key}/${devKey}.json`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Logged Out (Remote)', lastActive: now })
+                    });
+                }
+            }
+            await this.logActivity(username, 'Logged Out Other Devices');
         } else {
             await fetch(`${window.FIREBASE_DB_URL}/storeData/sessions/${key}/${deviceId}.json`, {
-                method: 'DELETE'
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Logged Out', lastActive: now })
             });
+            await fetch(`${window.FIREBASE_DB_URL}/storeData/users/${key}.json`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accountStatus: 'Logged Out', lastSeen: now })
+            });
+            await this.logActivity(username, 'Logged Out', `Device: ${this.getDeviceLabel()}`);
         }
-        const synced = await this.syncAll(username);
-        return synced.activeDevices;
+
+        const syncedAfter = await this.syncAll(username);
+        return syncedAfter.activeDevices;
     },
 
-    // Save a new order to Firebase from any device
+    // Save a new order permanently & log the activity
     async saveOrder(orderPayload) {
         orderPayload.timestamp = Date.now();
         await fetch(`${window.FIREBASE_DB_URL}/storeData/orders/MJD_${orderPayload.orderId}.json`, {
@@ -112,5 +163,17 @@ window.CloudDB = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderPayload)
         });
+        const user = (orderPayload.customer && orderPayload.customer.accountUser) || 'Guest';
+        await this.logActivity(user, 'Placed Order', `Order #MJD-${orderPayload.orderId} (Rs. ${orderPayload.totalPaid})`);
+    },
+
+    // Update order status permanently & log the activity
+    async updateOrder(orderId, updatedFields, actorName = 'Customer') {
+        await fetch(`${window.FIREBASE_DB_URL}/storeData/orders/MJD_${orderId}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedFields)
+        });
+        await this.logActivity(actorName, 'Updated Order', `Order #MJD-${orderId} → ${updatedFields.status}`);
     }
 };

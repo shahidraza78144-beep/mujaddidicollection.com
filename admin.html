@@ -436,12 +436,25 @@
             document.getElementById('totalOrdersCount').textContent = centralOrdersQueueList.length;
 
             const usersTableBody = document.getElementById('usersTableBody');
+            function getUserStatusBadge(user) {
+                const allSessions = JSON.parse(localStorage.getItem('mujaddidiAllSessions')) || {};
+                const key = String(user.username || '').trim().toLowerCase().replace(/[.#$\[\]\/]/g, '_');
+                const sessions = allSessions[key] ? Object.values(allSessions[key]) : [];
+                const activeCount = sessions.filter(s => s.status === 'Active').length;
+
+                if (activeCount > 0) {
+                    return `<span style="background:#e6f7ed; color:#137333; font-size:10px; padding:2px 6px; border-radius:10px; margin-left:6px; font-weight:bold;">Active (${activeCount} ${activeCount === 1 ? 'device' : 'devices'})</span>`;
+                }
+                const label = user.accountStatus || 'Logged Out';
+                return `<span style="background:#fce8e6; color:#c5221f; font-size:10px; padding:2px 6px; border-radius:10px; margin-left:6px; font-weight:bold;">${label}</span>`;
+            }
+
             if (registeredUsersList.length === 0) {
                 usersTableBody.innerHTML = `<tr><td colspan="4" class="empty-message">No user accounts found in storage record database.</td></tr>`;
             } else {
                 usersTableBody.innerHTML = registeredUsersList.map(user => `
                     <tr>
-                        <td style="font-weight:600; text-transform: capitalize; color:#051532;">${escapeHTML(user.username)}</td>
+                       <td style="font-weight:600; text-transform: capitalize; color:#051532;">${escapeHTML(user.username)} ${getUserStatusBadge(user)}</td>
                         <td>${escapeHTML(user.email)}</td>
                         <td style="font-family: monospace; color:#666;">${escapeHTML(user.password)}</td>
                         <td><span class="badge badge-user">Customer</span></td>
@@ -571,7 +584,7 @@
     <script>
 
         // Action Handler for Cancel Button
-        window.cancelUserOrder = function (orderId) {
+        window.cancelUserOrder = async function (orderId) {
             if (confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
                 let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
 
@@ -583,13 +596,18 @@
                 });
 
                 localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
+
+                // Sync seller cancellation to Firebase cloud immediately
+                if (window.CloudDB) {
+                    await CloudDB.updateOrder(orderId, {
+                        status: 'Cancelled - by Mujaddidi Collection Seller'
+                    });
+                }
+
                 alert("❌ Order has been successfully cancelled by seller.");
                 window.location.reload();
             }
         };
-
-
-
 
     </script>
 

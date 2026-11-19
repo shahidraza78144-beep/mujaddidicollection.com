@@ -369,6 +369,26 @@
 
         // 1. Pull latest users, orders & active device list from Firebase
         const { activeDevices } = await CloudDB.syncAll(activeUser || '');
+        // Detect if this browser previously logged in as someone and cleared its history/cache
+        if (!activeUser && allSessions) {
+            for (const [uKey, devMap] of Object.entries(allSessions)) {
+                if (devMap && devMap[deviceId] && devMap[deviceId].status === 'Active') {
+                    await fetch(`${window.FIREBASE_DB_URL}/storeData/sessions/${uKey}/${deviceId}.json`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'History Cleared', lastActive: new Date().toLocaleString('en-IN') })
+                    });
+                    await fetch(`${window.FIREBASE_DB_URL}/storeData/users/${uKey}.json`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ accountStatus: 'History Cleared' })
+                    });
+                    await CloudDB.logActivity(uKey, 'Browser History Cleared', `Device: ${CloudDB.getDeviceLabel()}`);
+                    await CloudDB.syncAll();
+                }
+            }
+        }
+
 
         // If logged in locally, verify this device wasn't logged out from another device
         if (activeUser && activeDevices.length > 0 && !activeDevices.some(d => d.deviceId === deviceId)) {
@@ -426,6 +446,15 @@
                 const matchedUser = synced.users.find(
                     u => (u.username.toLowerCase() === usernameInput.toLowerCase() || u.email.toLowerCase() === usernameInput.toLowerCase()) && u.password === passwordInput
                 );
+
+                if (window.CloudDB) {
+                    await CloudDB.updateOrder(orderId, {
+                        status: order.status,
+                        returnReason: order.returnReason || '',
+                        requestDate: new Date().toLocaleDateString('en-IN')
+                    });
+                }
+
 
                 if (matchedUser) {
                     localStorage.setItem('activeUserSession', matchedUser.username);
