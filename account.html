@@ -354,6 +354,9 @@
     }
 
 </script>
+
+<script src="cloud-db.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', async function () {
         const regForm = document.getElementById('RegForm');
@@ -361,44 +364,14 @@
         const formContainer = document.querySelector('.form-container');
         const historyContainer = document.getElementById('orderHistoryContainer');
 
-        // Generate or retrieve a persistent unique ID for this browser/device
-        let deviceId = localStorage.getItem('mujaddidiDeviceId');
-        if (!deviceId) {
-            deviceId = 'DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-            localStorage.setItem('mujaddidiDeviceId', deviceId);
-        }
-
-        function getDeviceLabel() {
-            const ua = navigator.userAgent;
-            if (/Android/i.test(ua)) return 'Android Phone';
-            if (/iPhone|iPad/i.test(ua)) return 'iPhone / iPad';
-            if (/Edg/i.test(ua)) return 'Windows (Edge)';
-            if (/Chrome/i.test(ua)) return 'Windows / PC (Chrome)';
-            return 'Web Browser';
-        }
-
-        // Pull latest users, orders, and active device list from server
-        async function pullFromServer(username = '') {
-            try {
-                const url = username ? `/api/sync?username=${encodeURIComponent(username)}` : '/api/sync';
-                const res = await fetch(url);
-                if (res.ok) {
-                    const serverData = await res.json();
-                    localStorage.setItem('mujaddidiUsers', JSON.stringify(serverData.users || []));
-                    localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(serverData.orders || []));
-                    return serverData.activeDevices || [];
-                }
-            } catch (e) {
-                console.warn('Server offline; using local cache.');
-            }
-            return [];
-        }
-
+        const deviceId = CloudDB.getDeviceId();
         const activeUser = localStorage.getItem('activeUserSession');
-        let currentDevices = await pullFromServer(activeUser || '');
 
-        // If logged in locally, verify this device wasn't logged out remotely from another device
-        if (activeUser && currentDevices.length > 0 && !currentDevices.some(d => d.deviceId === deviceId)) {
+        // 1. Pull latest users, orders & active device list from Firebase
+        const { activeDevices } = await CloudDB.syncAll(activeUser || '');
+
+        // If logged in locally, verify this device wasn't logged out from another device
+        if (activeUser && activeDevices.length > 0 && !activeDevices.some(d => d.deviceId === deviceId)) {
             localStorage.removeItem('activeUserSession');
             alert("You were logged out from another device.");
             window.location.reload();
@@ -406,13 +379,11 @@
         }
 
         if (activeUser) {
-            displayDashboard(activeUser, currentDevices);
-            if (typeof renderOrderHistory === 'function') renderOrderHistory();
-        } else {
-            if (typeof renderOrderHistory === 'function') renderOrderHistory();
+            displayDashboard(activeUser, activeDevices);
         }
+        if (typeof renderOrderHistory === 'function') renderOrderHistory();
 
-        // 1. REGISTRATION CONTROLLER
+        // 2. REGISTRATION CONTROLLER (Saves directly to Firebase)
         if (regForm) {
             regForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
@@ -425,9 +396,8 @@
                     return;
                 }
 
-                await pullFromServer();
-                let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
-                const userExists = usersDatabase.some(
+                const synced = await CloudDB.syncAll();
+                const userExists = synced.users.some(
                     u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === email.toLowerCase()
                 );
 
@@ -436,52 +406,34 @@
                     return;
                 }
 
-                usersDatabase.push({ username: username, email: email, password: password });
-                localStorage.setItem('mujaddidiUsers', JSON.stringify(usersDatabase));
+                await CloudDB.registerUser({ username: username, email: email, password: password });
+                await CloudDB.syncAll();
 
-                await fetch('/api/sync/users', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ users: usersDatabase })
-                });
-
-                alert("Registration Successful! Please log in.");
+                alert("Registration Successful! You can now log in from any device.");
                 regForm.reset();
                 if (typeof login === "function") { login(); }
             });
         }
 
-        // 2. LOGIN CONTROLLER (Supports Username OR Email across any device)
+        // 3. LOGIN CONTROLLER (Works with Username OR Email from ANY device)
         if (loginForm) {
             loginForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const usernameInput = loginForm.querySelector('input[placeholder="Username"]').value.trim();
                 const passwordInput = loginForm.querySelector('input[placeholder="Password"]').value.trim();
 
-                await pullFromServer();
-                let usersDatabase = JSON.parse(localStorage.getItem('mujaddidiUsers')) || [];
-                const matchedUser = usersDatabase.find(
+                const synced = await CloudDB.syncAll();
+                const matchedUser = synced.users.find(
                     u => (u.username.toLowerCase() === usernameInput.toLowerCase() || u.email.toLowerCase() === usernameInput.toLowerCase()) && u.password === passwordInput
                 );
 
                 if (matchedUser) {
                     localStorage.setItem('activeUserSession', matchedUser.username);
-
-                    // Register this device session on the server
-                    const sessRes = await fetch('/api/session/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            username: matchedUser.username,
-                            deviceId: deviceId,
-                            deviceName: getDeviceLabel()
-                        })
-                    });
-                    const sessData = sessRes.ok ? await sessRes.json() : { activeDevices: [] };
+                    const updatedDevices = await CloudDB.loginDevice(matchedUser.username);
 
                     alert("Login Successful! Welcome back.");
                     loginForm.reset();
-                    displayDashboard(matchedUser.username, sessData.activeDevices || []);
+                    displayDashboard(matchedUser.username, updatedDevices);
                     if (typeof renderOrderHistory === 'function') renderOrderHistory();
                 } else {
                     alert("Invalid Username/Email or Password.");
@@ -489,7 +441,7 @@
             });
         }
 
-        // 3. PROFILE DASHBOARD PANELS (With Active Device Counter)
+        // 4. PROFILE DASHBOARD (Shows Active Devices Logged In)
         function displayDashboard(username, devicesList = []) {
             if (!formContainer) return;
 
@@ -528,31 +480,21 @@
             const logoutOthersBtn = document.getElementById('logoutOthersBtn');
             if (logoutOthersBtn) {
                 logoutOthersBtn.addEventListener('click', async function () {
-                    const res = await fetch('/api/session/logout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, deviceId, logoutOthers: true })
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        alert("All other devices have been logged out.");
-                        displayDashboard(username, data.activeDevices);
-                    }
+                    const remaining = await CloudDB.logoutDevice(username, true);
+                    alert("All other devices have been logged out.");
+                    displayDashboard(username, remaining);
                 });
             }
 
             document.getElementById('logoutBtn').addEventListener('click', async function () {
                 if (confirm("Are you sure you want to log out?")) {
-                    await fetch('/api/session/logout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, deviceId, logoutOthers: false })
-                    });
+                    await CloudDB.logoutDevice(username, false);
                     localStorage.removeItem('activeUserSession');
                     window.location.reload();
                 }
             });
         }
+
 
         // 4. LOWER CHRONOLOGICAL TIMELINE INVOICES (WITH RED CANCEL OVERRIDE)
         function renderOrderHistory() {

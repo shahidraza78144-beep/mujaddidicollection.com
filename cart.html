@@ -274,6 +274,9 @@
         navLinks.style.right = "-200px";
     }
 </script>
+
+<script src="cloud-db.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         // 1. Identify the container using your specific attribute or class signatures safely
@@ -541,16 +544,8 @@
                 centralQueue.unshift(orderPayload);
                 localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralQueue));
 
-                // Sync new order with server database so ALL devices & admin.html see it immediately
-                try {
-                    await fetch('/api/sync/orders', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ orders: centralQueue })
-                    });
-                } catch (err) {
-                    console.warn('Order saved locally; server sync pending.');
-                }
+                // Save order to Firebase cloud so all devices & admin.html see it
+                await CloudDB.saveOrder(orderPayload);
 
                 // 9. FLUSH ACTIVE SHOPPING CART MEMORY CACHES COMPLETELY
                 localStorage.removeItem("mujaddidi_cart");

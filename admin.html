@@ -366,11 +366,11 @@
                                 <th>Purchased Items Detail</th>
                                 <th>Financial Summary Total</th>
                                 <th>Order Status of Customers</th>
-                                <th>Order Date</th>
+                                <th>Customer's Order Date</th>
                                 <th>Estimated Delivery Date</th>
                                 <th>Cancel Button for Emergency</th>
                                 <th>Order Invoice of the Customer</th>
-                                <th>Whatsapp Receipt Sending</th>
+                                <th>Send Receipt via Email</th>
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody"></tbody>
@@ -383,6 +383,7 @@
 
 
     <script src="https://cloudflare.com"></script>
+    <script src="cloud-db.js"></script>
 
 
 
@@ -554,25 +555,16 @@
 
         // Run validation check immediately upon document parsing lifecycle end
         document.addEventListener('DOMContentLoaded', async function () {
+            // Pull latest users & orders from Firebase cloud first
+            if (window.CloudDB) {
+                await CloudDB.syncAll();
+            }
 
             if (sessionStorage.getItem('adminSessionActive') === 'true') {
                 grantAccess();
             }
-
-            try {
-                const syncRes = await fetch('/api/sync');
-                if (syncRes.ok) {
-                    const serverData = await syncRes.json();
-                    if (serverData.users && serverData.users.length) {
-                        localStorage.setItem('mujaddidiUsers', JSON.stringify(serverData.users));
-                    }
-                    if (serverData.orders && serverData.orders.length) {
-                        localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(serverData.orders));
-                    }
-                }
-            } catch (e) { }
-
         });
+
     </script>
 
 
