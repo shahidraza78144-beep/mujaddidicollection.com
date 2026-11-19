@@ -560,7 +560,7 @@
             let historyHtml = '';
             userOrders.forEach((order) => {
                 let orderStatus = order.status || 'Placed';
-                let isCancelled = (orderStatus === 'Cancelled by You' || orderStatus === 'Cancelled - by Mujaddidi Collection');
+                let isCancelled = (orderStatus === 'Cancelled' || orderStatus === 'Cancelled - by Mujaddidi Collection');
 
                 // 1. Automatically advance status over 15 days if not cancelled
                 if (!isCancelled && order.date) {
