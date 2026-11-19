@@ -723,36 +723,70 @@
 
 
     // Action Handler for Cancel Button
-    window.cancelUserOrder = function (orderId) {
+    window.cancelUserOrder = async function (orderId) {
         if (confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
             let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            const activeUser = localStorage.getItem('activeUserSession') || 'Customer';
 
             centralOrders = centralOrders.map(order => {
-                if (order.orderId === orderId) { order.status = 'Cancelled'; }
+                if (String(order.orderId) === String(orderId)) {
+                    order.status = 'Cancelled';
+                }
                 return order;
             });
 
             localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
+
+            // Push cancellation to Firebase cloud so admin.html & all devices see it immediately
+            try {
+                if (window.CloudDB && typeof CloudDB.updateOrder === 'function') {
+                    await CloudDB.updateOrder(orderId, {
+                        status: 'Cancelled',
+                        cancelledAt: new Date().toLocaleString('en-IN')
+                    }, activeUser);
+                }
+            } catch (err) {
+                console.error('Firebase cancel sync error:', err);
+            }
+
             alert("❌ Your order has been successfully cancelled. Refund will be processed.");
-            window.location.reload(); // Instantly refresh layout grids
+            window.location.reload();
         }
     };
 
     // Action Handler for Return / Exchange Button
-    window.returnExchangeOrder = function (orderId) {
+    window.returnExchangeOrder = async function (orderId) {
         let selection = prompt("Type 'RETURN' to claim store refund credit, or type 'EXCHANGE' to change product sizes:");
         if (!selection) return;
         selection = selection.toUpperCase().trim();
 
         if (selection === "RETURN" || selection === "EXCHANGE") {
             let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            const activeUser = localStorage.getItem('activeUserSession') || 'Customer';
+            const newStatus = selection === "EXCHANGE" ? 'Exchange Requested' : 'Return Requested';
 
             centralOrders = centralOrders.map(order => {
-                if (order.orderId === orderId) { order.status = 'Return Requested'; }
+                if (String(order.orderId) === String(orderId)) {
+                    order.status = newStatus;
+                }
                 return order;
             });
 
             localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
+
+            // Push Return/Exchange request to Firebase cloud so admin.html & all devices see it immediately
+            try {
+                if (window.CloudDB && typeof CloudDB.updateOrder === 'function') {
+                    await CloudDB.updateOrder(orderId, {
+                        status: newStatus,
+                        requestType: selection,
+                        requestDate: new Date().toLocaleString('en-IN')
+                    }, activeUser);
+                }
+            } catch (err) {
+                console.error('Firebase return/exchange sync error:', err);
+            }
+
             alert(`📨 Success! Your ${selection} request has been submitted. Our team will collect the package.`);
             window.location.reload();
         } else {

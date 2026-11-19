@@ -585,29 +585,31 @@
 
         // Action Handler for Cancel Button
         window.cancelUserOrder = async function (orderId) {
-            if (confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
-                let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            if (!confirm("Are you sure you want to cancel this order? This action cannot be undone.")) return;
 
-                centralOrders = centralOrders.map(order => {
-                    if (String(order.orderId) === String(orderId)) {
-                        order.status = 'Cancelled - by Mujaddidi Collection Seller';
-                    }
-                    return order;
-                });
+            let centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            centralOrders = centralOrders.map(order => {
+                if (String(order.orderId) === String(orderId)) {
+                    order.status = 'Cancelled - by Mujaddidi Collection Seller';
+                }
+                return order;
+            });
+            localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
 
-                localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralOrders));
-
-                // Sync seller cancellation to Firebase cloud immediately
-                if (window.CloudDB) {
+            try {
+                if (window.CloudDB && typeof CloudDB.updateOrder === 'function') {
                     await CloudDB.updateOrder(orderId, {
                         status: 'Cancelled - by Mujaddidi Collection Seller'
-                    });
+                    }, 'Mujaddidi Collection Seller');
                 }
-
-                alert("❌ Order has been successfully cancelled by seller.");
-                window.location.reload();
+            } catch (err) {
+                console.error('Firebase cancel sync error:', err);
             }
+
+            alert("❌ Order has been successfully cancelled by seller.");
+            window.location.reload();
         };
+
 
     </script>
 
