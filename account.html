@@ -374,7 +374,7 @@
         const activeUser = localStorage.getItem('activeUserSession');
 
         // 1. Pull latest users, orders & active device list from Firebase
-        const { activeDevices } = await CloudDB.syncAll(activeUser || '');
+        const { activeDevices, allSessions } = await CloudDB.syncAll(activeUser || '');
         // Detect if this browser previously logged in as someone and cleared its history/cache
         if (!activeUser && allSessions) {
             for (const [uKey, devMap] of Object.entries(allSessions)) {
