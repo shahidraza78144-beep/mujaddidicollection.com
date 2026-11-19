@@ -355,14 +355,20 @@
 
 </script>
 
+<!-- Make sure this line is right ABOVE your <script> tag in account.html -->
 <script src="cloud-db.js"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', async function () {
         const regForm = document.getElementById('RegForm');
         const loginForm = document.getElementById('LoginForm');
         const formContainer = document.querySelector('.form-container');
         const historyContainer = document.getElementById('orderHistoryContainer');
+
+        if (!window.CloudDB) {
+            console.error("cloud-db.js failed to load! Check that cloud-db.js is in the same folder.");
+            return;
+        }
+
 
         const deviceId = CloudDB.getDeviceId();
         const activeUser = localStorage.getItem('activeUserSession');
