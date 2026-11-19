@@ -423,9 +423,13 @@
                 }
 
                 const synced = await CloudDB.syncAll();
-                const userExists = synced.users.some(
-                    u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === email.toLowerCase()
+                const userExists = (synced.users || []).some(
+                    u => u && (
+                        (u.username && u.username.toLowerCase() === username.toLowerCase()) ||
+                        (u.email && u.email.toLowerCase() === email.toLowerCase())
+                    )
                 );
+
 
                 if (userExists) {
                     alert("Username or Email is already registered! Please log in.");
@@ -449,8 +453,11 @@
                 const passwordInput = loginForm.querySelector('input[placeholder="Password"]').value.trim();
 
                 const synced = await CloudDB.syncAll();
-                const matchedUser = synced.users.find(
-                    u => (u.username.toLowerCase() === usernameInput.toLowerCase() || u.email.toLowerCase() === usernameInput.toLowerCase()) && u.password === passwordInput
+                const matchedUser = (synced.users || []).find(
+                    u => u && u.password === passwordInput && (
+                        (u.username && u.username.toLowerCase() === usernameInput.toLowerCase()) ||
+                        (u.email && u.email.toLowerCase() === usernameInput.toLowerCase())
+                    )
                 );
 
                 if (window.CloudDB) {
