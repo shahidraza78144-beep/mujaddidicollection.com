@@ -571,6 +571,7 @@
 
                     localStorage.setItem('activeUserSession', pendingMatchedUser.username);
                     const updatedDevices = await CloudDB.loginDevice(pendingMatchedUser.username);
+                    await CloudDB.syncAll(pendingMatchedUser.username);
 
                     alert("Login Successful! Welcome back.");
                     loginForm.reset();
@@ -579,6 +580,7 @@
                     loginSubmitBtn.textContent = 'Send Login OTP';
                     displayDashboard(pendingMatchedUser.username, updatedDevices);
                     renderOrderHistory();
+
                 }
             });
         }
