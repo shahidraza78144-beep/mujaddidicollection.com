@@ -258,7 +258,7 @@ window.CloudDB = {
         });
 
         // 2. Send 6-Digit OTP via EmailJS REST API
-        const emailJsUrl = ['https', 'api.emailjs.com'].join('://') + '/api/v1.0/email/send';
+        const emailJsUrl = ['https://api.emailjs.com/api/v1.0/email/send']
 
         const res = await fetch(emailJsUrl, {
             method: 'POST',
