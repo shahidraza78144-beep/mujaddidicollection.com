@@ -752,6 +752,14 @@
                     const statusLower = orderStatus.toLowerCase();
                     const isCancelled = statusLower.includes('cancelled');
                     const isDelivered = statusLower === 'delivered';
+                    const hasReturnReq = Boolean(order.returnRefId);
+                    const currentReturnStatus = order.returnStatus || 'Pending Review';
+
+                    // Show Admin's Return/Exchange status in top pill badge when requested
+                    const displayTopBadgeStatus = hasReturnReq
+                        ? `${order.returnType}: ${currentReturnStatus}`
+                        : orderStatus;
+
                     const isShippedOrBeyond =
                         statusLower === 'shipped' ||
                         statusLower === 'processing' ||
@@ -769,20 +777,23 @@
                         ? `<span style="background:#051532; color:#eba345; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:bold; margin-left:6px;">📱 App</span>`
                         : `<span style="background:#eef2ff; color:#051532; border:1px solid #cbd5e1; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:bold; margin-left:6px;">🌐 Website</span>`;
 
+                    // Reference No. right below #MJD-OrderID
+                    const refNumberHtml = hasReturnReq
+                        ? `<span style="display:block; margin-top:4px; font-family:monospace; font-size:11px; font-weight:bold; color:#c5221f; background:#fdfaf4; border:1px dashed #eba345; padding:2px 6px; border-radius:4px;">Ref No: #${order.returnRefId}</span>`
+                        : '';
+
                     let actionButtonHtml = '';
                     if (!isCancelled) {
                         if (statusLower === 'placed') {
                             actionButtonHtml = `<button onclick="cancelUserOrder('${order.orderId}')" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer;">Cancel Order</button>`;
                         } else if (isDelivered) {
-                            actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer;">Return / Exchange</button>`;
-                        } else if (isShippedOrBeyond) {
-                            actionButtonHtml = `<span style="background: #eef2ff; color: #051532; padding: 8px 12px; font-size: 12px; font-weight: bold; border-radius: 4px;"><i class="fa fa-lock"></i> Product is shipped and now it cannot cancel</span>`;
-                        } else if (isDelivered) {
-                            if (order.returnRefId) {
-                                actionButtonHtml = `<span style="background:#fff3cd; color:#b06000; border:1px solid #eba345; padding:8px 14px; font-size:12px; font-weight:bold; border-radius:4px;">🔄 ${order.returnType} (#${order.returnRefId}): ${order.returnStatus || 'Pending Review'}</span>`;
+                            if (hasReturnReq) {
+                                actionButtonHtml = `<span style="background:#eef2ff; color:#051532; border:1px solid #051532; padding:8px 14px; font-size:12px; font-weight:bold; border-radius:4px;">🔄 ${order.returnType} Status: ${currentReturnStatus}</span>`;
                             } else {
                                 actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer;">Return / Exchange</button>`;
                             }
+                        } else if (isShippedOrBeyond) {
+                            actionButtonHtml = `<span style="background: #eef2ff; color: #051532; padding: 8px 12px; font-size: 12px; font-weight: bold; border-radius: 4px;"><i class="fa fa-lock"></i> Product is shipped and now it cannot cancel</span>`;
                         }
 
                         if (isPrepaid || isShippedOrBeyond) {
@@ -798,24 +809,36 @@
                         }
                     }
                     let estimatedDeliveryDate = order.deliveryDate || "Within 7–15 Days";
-                    const statesArray = isCancelled
-                        ? ["Placed", "Shipped", "Processing", "Out for Delivery", "Cancelled"]
-                        : ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
 
+                    let statesArray = ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
                     let activeIndex = statesArray.findIndex(s => s.toLowerCase() === statusLower);
+
+                    if (isCancelled) {
+                        statesArray = ["Placed", "Shipped", "Processing", "Out for Delivery", "Cancelled"];
+                        activeIndex = 4;
+                    } else if (hasReturnReq) {
+                        const isRet = (order.returnType || '').toLowerCase() === 'return';
+                        statesArray = isRet
+                            ? ["Pending Review", "Approved - Pickup Scheduled", "Refunding - Refund Initiated", "Refund Completed"]
+                            : ["Pending Review", "Approved - Pickup Scheduled", "Exchanging - Replacement Dispatched", "Exchange Completed"];
+                        activeIndex = statesArray.findIndex(s => s.toLowerCase() === currentReturnStatus.toLowerCase());
+                        if (activeIndex === -1) activeIndex = 0;
+                    }
+
                     if (activeIndex === -1) activeIndex = 0;
 
                     let fillWidth = isCancelled ? 100 : (activeIndex / (statesArray.length - 1)) * 100;
-                    let themeLineColor = isCancelled ? '#c5221f' : '#eba345';
+                    let themeLineColor = (isCancelled || currentReturnStatus === 'Rejected') ? '#c5221f' : '#eba345';
 
                     let badgeBg = '#fff3cd'; let badgeColor = '#b06000';
-                    if (isDelivered) { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
-                    if (isCancelled) { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
+                    if (isDelivered && !hasReturnReq) { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
+                    if (currentReturnStatus === 'Refund Completed' || currentReturnStatus === 'Exchange Completed') { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
+                    if (isCancelled || currentReturnStatus === 'Rejected') { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
 
                     let timelineStepsHtml = '';
                     statesArray.forEach((stateName, index) => {
-                        let circleBg = isCancelled ? '#c5221f' : (index <= activeIndex ? '#eba345' : '#e0e0e0');
-                        let textColor = isCancelled ? '#c5221f' : (index <= activeIndex ? '#051532' : '#999');
+                        let circleBg = (isCancelled || currentReturnStatus === 'Rejected') ? '#c5221f' : (index <= activeIndex ? '#eba345' : '#e0e0e0');
+                        let textColor = (isCancelled || currentReturnStatus === 'Rejected') ? '#c5221f' : (index <= activeIndex ? '#051532' : '#999');
                         let shadowStyle = (!isCancelled && index === activeIndex) ? 'box-shadow: 0 0 0 4px rgba(235, 163, 69, 0.25);' : '';
 
                         timelineStepsHtml += `
@@ -830,11 +853,15 @@
                     historyHtml += `
                     <div style="border: 1px solid #eee; border-radius: 8px; margin-bottom: 25px; background: #fff; text-align: left; font-family: sans-serif; overflow: hidden;">
                         <div style="background-color: #fcfcfc; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
-                            <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">ORDER ID</span><p style="margin:2px 0 0 0; color:#051532; font-weight:bold; font-size:14px;">#MJD-${order.orderId} ${sourceBadge}</p></div>
+                            <div>
+                                <span style="color:#777; font-size:11px; font-weight:bold; display:block;">ORDER ID</span>
+                                <p style="margin:2px 0 0 0; color:#051532; font-weight:bold; font-size:14px;">#MJD-${order.orderId} ${sourceBadge}</p>
+                                ${refNumberHtml}
+                            </div>
                             <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">DATE PLACED</span><p style="margin:2px 0 0 0; color:#555; font-size:13px;">${order.date || ''}</p></div>
                             <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">DELIVERY DATE</span><p style="margin:2px 0 0 0; color:#051532; font-weight:bold; font-size:13px;"><i class="fa fa-truck" style="color:${themeLineColor}; margin-right:4px;"></i>${isCancelled ? 'Shipment Cancelled' : estimatedDeliveryDate}</p></div>
                             <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">TOTAL PAID</span><p style="margin:2px 0 0 0; color:#eba345; font-weight:bold; font-size:14px;">₹${safeTotal}</p></div>
-                            <div><span style="background-color:${badgeBg}; color:${badgeColor}; padding:6px 14px; border-radius:20px; font-weight:bold; font-size:11px; display:inline-block; text-transform:uppercase;">${orderStatus}</span></div>
+                            <div><span style="background-color:${badgeBg}; color:${badgeColor}; padding:6px 14px; border-radius:20px; font-weight:bold; font-size:11px; display:inline-block; text-transform:uppercase;">${displayTopBadgeStatus}</span></div>
                         </div>
 
                         <div style="background-color: #fdfdfd; padding: 22px 10px; border-bottom: 1px dashed #eee;">
@@ -858,7 +885,6 @@
                 container.innerHTML = `<p style="color:#c5221f; padding:20px;">Error loading orders: ${err.message}</p>`;
             }
         }
-
 
         renderOrderHistory();
     });
