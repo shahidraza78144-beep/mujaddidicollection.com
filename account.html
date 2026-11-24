@@ -409,8 +409,24 @@
         }
         if (typeof renderOrderHistory === 'function') renderOrderHistory();
 
-        // 2. REGISTRATION CONTROLLER (Saves directly to Firebase)
+        // 2. REGISTRATION CONTROLLER (WITH 6-DIGIT EMAIL OTP)
         if (regForm) {
+            let regOtpInput = document.createElement('input');
+            regOtpInput.type = 'text';
+            regOtpInput.placeholder = 'Enter 6-Digit Email OTP';
+            regOtpInput.maxLength = 6;
+            regOtpInput.style.display = 'none';
+            regOtpInput.style.border = '2px solid #eba345';
+            regOtpInput.style.fontWeight = 'bold';
+            regOtpInput.style.letterSpacing = '3px';
+            regOtpInput.style.textAlign = 'center';
+
+            const regSubmitBtn = regForm.querySelector('button[type="submit"]');
+            regSubmitBtn.textContent = 'Send Verification OTP';
+            regForm.insertBefore(regOtpInput, regSubmitBtn);
+
+            let regOtpSent = false;
+
             regForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const username = regForm.querySelector('input[placeholder="Username"]').value.trim();
@@ -422,54 +438,147 @@
                     return;
                 }
 
-                const synced = await CloudDB.syncAll();
-                const userExists = (synced.users || []).some(
-                    u => u && (
-                        (u.username && u.username.toLowerCase() === username.toLowerCase()) ||
-                        (u.email && u.email.toLowerCase() === email.toLowerCase())
-                    )
-                );
+                if (!regOtpSent) {
+                    const synced = await CloudDB.syncAll();
+                    const userExists = (synced.users || []).some(
+                        u => u && (
+                            (u.username && u.username.toLowerCase() === username.toLowerCase()) ||
+                            (u.email && u.email.toLowerCase() === email.toLowerCase())
+                        )
+                    );
 
+                    if (userExists) {
+                        alert("Username or Email is already registered! Please log in.");
+                        return;
+                    }
 
-                if (userExists) {
-                    alert("Username or Email is already registered! Please log in.");
-                    return;
+                    try {
+                        regSubmitBtn.disabled = true;
+                        regSubmitBtn.textContent = 'Sending OTP...';
+                        await CloudDB.sendEmailOTP(email, username);
+                        regOtpSent = true;
+                        regOtpInput.style.display = 'block';
+                        regSubmitBtn.textContent = 'Verify OTP & Register';
+                        alert(`A 6-digit verification OTP has been sent to ${email}!`);
+                    } catch (err) {
+                        alert(err.message);
+                        regSubmitBtn.textContent = 'Send Verification OTP';
+                    } finally {
+                        regSubmitBtn.disabled = false;
+                    }
+                } else {
+                    const enteredOtp = regOtpInput.value.trim();
+                    if (enteredOtp.length < 6) {
+                        alert("Please enter the 6-digit OTP sent to your email.");
+                        return;
+                    }
+
+                    regSubmitBtn.disabled = true;
+                    const isValid = await CloudDB.verifyEmailOTP(email, enteredOtp);
+                    regSubmitBtn.disabled = false;
+
+                    if (!isValid) {
+                        alert("Invalid or expired OTP! Please try again.");
+                        return;
+                    }
+
+                    await CloudDB.registerUser({ username, email, password });
+                    await CloudDB.syncAll();
+
+                    alert("Email Verified & Registration Successful! You can now log in.");
+                    regForm.reset();
+                    regOtpSent = false;
+                    regOtpInput.style.display = 'none';
+                    regSubmitBtn.textContent = 'Send Verification OTP';
+                    if (typeof login === "function") { login(); }
                 }
-
-                await CloudDB.registerUser({ username: username, email: email, password: password });
-                await CloudDB.syncAll();
-
-                alert("Registration Successful! You can now log in from any device.");
-                regForm.reset();
-                if (typeof login === "function") { login(); }
             });
         }
 
-        // 3. LOGIN CONTROLLER (Works with Username OR Email from ANY device)
+        // 3. LOGIN CONTROLLER (WITH 6-DIGIT EMAIL OTP)
         if (loginForm) {
+            let loginOtpInput = document.createElement('input');
+            loginOtpInput.type = 'text';
+            loginOtpInput.placeholder = 'Enter 6-Digit Login OTP';
+            loginOtpInput.maxLength = 6;
+            loginOtpInput.style.display = 'none';
+            loginOtpInput.style.border = '2px solid #eba345';
+            loginOtpInput.style.fontWeight = 'bold';
+            loginOtpInput.style.letterSpacing = '3px';
+            loginOtpInput.style.textAlign = 'center';
+
+            const loginSubmitBtn = loginForm.querySelector('button[type="submit"]');
+            loginSubmitBtn.textContent = 'Send Login OTP';
+            loginForm.insertBefore(loginOtpInput, loginSubmitBtn);
+
+            let loginOtpSent = false;
+            let pendingMatchedUser = null;
+
             loginForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const usernameInput = loginForm.querySelector('input[placeholder="Username"]').value.trim();
                 const passwordInput = loginForm.querySelector('input[placeholder="Password"]').value.trim();
 
-                const synced = await CloudDB.syncAll();
-                const matchedUser = (synced.users || []).find(
-                    u => u && u.password === passwordInput && (
-                        (u.username && u.username.toLowerCase() === usernameInput.toLowerCase()) ||
-                        (u.email && u.email.toLowerCase() === usernameInput.toLowerCase())
-                    )
-                );
+                if (!loginOtpSent) {
+                    const synced = await CloudDB.syncAll();
+                    const matchedUser = (synced.users || []).find(
+                        u => u && u.password === passwordInput && (
+                            (u.username && u.username.toLowerCase() === usernameInput.toLowerCase()) ||
+                            (u.email && u.email.toLowerCase() === usernameInput.toLowerCase())
+                        )
+                    );
 
-                if (matchedUser) {
-                    localStorage.setItem('activeUserSession', matchedUser.username);
-                    const updatedDevices = await CloudDB.loginDevice(matchedUser.username);
+                    if (!matchedUser) {
+                        alert("Invalid Username/Email or Password.");
+                        return;
+                    }
+
+                    if (!matchedUser.email) {
+                        alert("No email linked to this account.");
+                        return;
+                    }
+
+                    try {
+                        loginSubmitBtn.disabled = true;
+                        loginSubmitBtn.textContent = 'Sending OTP...';
+                        await CloudDB.sendEmailOTP(matchedUser.email, matchedUser.username);
+                        pendingMatchedUser = matchedUser;
+                        loginOtpSent = true;
+                        loginOtpInput.style.display = 'block';
+                        loginSubmitBtn.textContent = 'Verify OTP & Login';
+                        alert(`6-Digit Login OTP sent to ${matchedUser.email}!`);
+                    } catch (err) {
+                        alert(err.message);
+                        loginSubmitBtn.textContent = 'Send Login OTP';
+                    } finally {
+                        loginSubmitBtn.disabled = false;
+                    }
+                } else {
+                    const enteredOtp = loginOtpInput.value.trim();
+                    if (enteredOtp.length < 6) {
+                        alert("Please enter the 6-digit OTP.");
+                        return;
+                    }
+
+                    loginSubmitBtn.disabled = true;
+                    const isValid = await CloudDB.verifyEmailOTP(pendingMatchedUser.email, enteredOtp);
+                    loginSubmitBtn.disabled = false;
+
+                    if (!isValid) {
+                        alert("Incorrect or expired OTP!");
+                        return;
+                    }
+
+                    localStorage.setItem('activeUserSession', pendingMatchedUser.username);
+                    const updatedDevices = await CloudDB.loginDevice(pendingMatchedUser.username);
 
                     alert("Login Successful! Welcome back.");
                     loginForm.reset();
-                    displayDashboard(matchedUser.username, updatedDevices);
-                    if (typeof renderOrderHistory === 'function') renderOrderHistory();
-                } else {
-                    alert("Invalid Username/Email or Password.");
+                    loginOtpSent = false;
+                    loginOtpInput.style.display = 'none';
+                    loginSubmitBtn.textContent = 'Send Login OTP';
+                    displayDashboard(pendingMatchedUser.username, updatedDevices);
+                    renderOrderHistory();
                 }
             });
         }
@@ -561,154 +670,46 @@
             userOrders.forEach((order) => {
                 let orderStatus = order.status || 'Placed';
                 let isCancelled = (orderStatus === 'Cancelled' || orderStatus === 'Cancelled - by Mujaddidi Collection Seller');
+                // 1. Read manual status directly from Firebase (controlled by Admin)
+                orderStatus = order.status || 'Placed';
+                const statusLower = orderStatus.toLowerCase();
+                const isShippedOrBeyond =
+                    statusLower === 'shipped' ||
+                    statusLower === 'processing' ||
+                    statusLower === 'out for delivery' ||
+                    statusLower === 'in transit' ||
+                    statusLower === 'delivered';
 
-                // 1. Automatically advance status over 15 days if not cancelled
-                if (!isCancelled && order.date) {
-                    let placedDate = new Date(order.date);
-                    if (!isNaN(placedDate.getTime())) {
-                        let now = new Date();
-                        let daysPassed = Math.floor((now - placedDate) / (1000 * 60 * 60 * 24));
+                const isPrepaid =
+                    (order.paymentMethod || '').toLowerCase().includes('upi') ||
+                    (order.paymentMethod || '').toLowerCase().includes('online') ||
+                    (order.paymentMethod || '').toLowerCase().includes('prepaid');
 
-                        if (daysPassed >= 15) {
-                            orderStatus = 'Delivered';
-                        } else if (daysPassed >= 12) {
-                            orderStatus = 'Out for Delivery';
-                        } else if (daysPassed >= 7) {
-                            orderStatus = 'Processing';
-                        } else if (daysPassed >= 3) {
-                            orderStatus = 'Shipped';
-                        } else {
-                            orderStatus = 'Placed';
-                        }
-                    }
-                }
-
-                // 2. Build Action Buttons (Cancel/Return + Print Receipt — hidden when cancelled)
+                // 2. Build Action Buttons (Cancel / Return / Shipped Lock + Print Receipt)
                 let actionButtonHtml = '';
 
                 if (!isCancelled) {
-                    if (orderStatus === 'Placed' || orderStatus === 'Shipped' || orderStatus === 'Processing' || orderStatus === 'Out for Delivery' || orderStatus === 'In Transit') {
+                    if (statusLower === 'placed') {
                         actionButtonHtml = `<button onclick="cancelUserOrder('${order.orderId}')" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
-                    } else if (orderStatus === 'Delivered') {
+                    } else if (statusLower === 'delivered') {
                         actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
+                    } else if (isShippedOrBeyond) {
+                        actionButtonHtml = `<span style="background: #eef2ff; color: #051532; padding: 8px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa fa-lock"></i> Product is shipped and now it cannot cancel</span>`;
                     }
 
-                    // Append Print Receipt button for all non-cancelled orders
-                    actionButtonHtml += `
-                <button class="print-receipt-btn" onclick="triggerReceiptPrint(this)" 
-                        data-order-id="${order.orderId}" 
-                        data-date="${order.date || 'N/A'}" 
-                        data-total="${order.totalAmount || 0}" 
-                        data-address="${order.shippingAddress || 'No Address Recorded'}" 
-                        style="background: #eba345; color: #051532; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; transition: 0.2s; text-transform: uppercase;">
-                    <i class="fa fa-print"></i> Print Receipt
-                </button>`;
-                }
-
-                // 3. Calculate 15-days future arrival date
-                let estimatedDeliveryDate = order.deliveryDate;
-                if (!estimatedDeliveryDate && order.date) {
-                    let placementDate = new Date(order.date);
-                    if (!isNaN(placementDate.getTime())) {
-                        placementDate.setDate(placementDate.getDate() + 15);
-                        estimatedDeliveryDate = placementDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-                    } else {
-                        estimatedDeliveryDate = "15 Days from booking";
+                    // Show Print Receipt immediately for Prepaid, or once Shipped for COD
+                    if (isPrepaid || isShippedOrBeyond) {
+                        actionButtonHtml += `
+                    <button class="print-receipt-btn" onclick="triggerReceiptPrint(this)" 
+                            data-order-id="${order.orderId}" 
+                            data-date="${order.date || 'N/A'}" 
+                            data-total="${order.totalAmount || order.totalPaid || 0}" 
+                            data-address="${order.shippingAddress || 'No Address Recorded'}" 
+                            style="background: #eba345; color: #051532; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; transition: 0.2s; text-transform: uppercase;">
+                        <i class="fa fa-print"></i> Print Receipt
+                    </button>`;
                     }
-                } else if (!estimatedDeliveryDate) {
-                    estimatedDeliveryDate = "15 Days from booking";
                 }
-
-                // 4. Map tracking bar indices
-                const statesArray = isCancelled
-                    ? ["Placed", "Shipped", "Processing", "Out for Delivery", "Cancelled"]
-                    : ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
-
-                let activeIndex = statesArray.indexOf(orderStatus);
-                if (activeIndex === -1) activeIndex = 0;
-
-                // 5. Determine tracking fill widths and color rules dynamically
-                let fillWidth = isCancelled ? 100 : (activeIndex / (statesArray.length - 1)) * 100;
-                let themeLineColor = isCancelled ? '#c5221f' : '#eba345';
-
-                let badgeBg = '#fff3cd'; let badgeColor = '#b06000';
-                if (orderStatus === 'Delivered') { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
-                if (isCancelled) { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
-
-                // Loop to draw the 5 small circle nodes on the progress tracking track line
-                let timelineStepsHtml = '';
-                statesArray.forEach((stateName, index) => {
-                    let circleBg = '#e0e0e0';
-                    let textColor = '#999';
-                    let shadowStyle = '';
-
-
-                    if (isCancelled) {
-                        // Turn everything red to signal a completely broken pipeline path
-                        circleBg = '#c5221f';
-                        textColor = '#c5221f';
-                        if (index === 0) shadowStyle = 'box-shadow: 0 0 0 4px rgba(197, 34, 31, 0.25);';
-                    } else {
-                        // Standard Golden Theme Progress Metrics
-                        circleBg = index <= activeIndex ? '#eba345' : '#e0e0e0';
-                        textColor = index <= activeIndex ? '#051532' : '#999';
-                        if (index === activeIndex) shadowStyle = 'box-shadow: 0 0 0 4px rgba(235, 163, 69, 0.25);';
-                    }
-
-                    timelineStepsHtml += `
-                    <div style="flex: 1; text-align: center; position: relative; z-index: 2;">
-                        <div style="width: 12px; height: 12px; background-color: ${circleBg}; border-radius: 50%; margin: 0 auto 6px auto; ${shadowStyle} transition: background 0.3s;"></div>
-                        <span style="font-size: 8px; font-weight: bold; color: ${textColor}; display: block; text-transform: uppercase; line-height: 1.2;">${stateName}</span>
-                    </div>`;
-                });
-
-                historyHtml += `
-                <div style="border: 1px solid #eee; border-radius: 8px; margin-bottom: 25px; background: #fff; text-align: left; font-family: sans-serif; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-                    
-                    <!-- Top Summary Card Strip -->
-                    <div style="background-color: #fcfcfc; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
-                        <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">ORDER ID</span><p style="margin:2px 0 0 0; color:#051532; font-weight:bold; font-size:14px;">#MJD-${order.orderId}</p></div>
-                        <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">DATE PLACED</span><p style="margin:2px 0 0 0; color:#555; font-size:13px;">${order.date}</p></div>
-                        <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">DELIVERY DATE</span><p style="margin:2px 0 0 0; color:#051532; font-weight:bold; font-size:13px;"><i class="fa fa-truck" style="color:${themeLineColor}; margin-right:4px;"></i>${isCancelled ? 'Shipment Cancelled' : estimatedDeliveryDate}</p></div>
-                        <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">TOTAL PAID</span><p style="margin:2px 0 0 0; color:#eba345; font-weight:bold; font-size:14px;">₹${parseFloat(order.totalPaid).toFixed(2)}</p></div>
-                        <div><span style="background-color:${badgeBg}; color:${badgeColor}; padding:6px 14px; border-radius:20px; font-weight:bold; font-size:11px; display:inline-block; text-transform:uppercase;">${orderStatus}</span></div>
-                    </div>
-
-                    <!-- Visual Timeline Progress Bar Infographic -->
-                    <div style="background-color: #fdfdfd; padding: 22px 10px; border-bottom: 1px dashed #eee; box-sizing: border-box;">
-                        <div style="position: relative; width: 92%; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="position: absolute; top: 4px; left: 0; width: 100%; height: 4px; background-color: #e0e0e0; border-radius: 2px; z-index: 1;"></div>
-                            <div style="position: absolute; top: 4px; left: 0; width: ${fillWidth}%; height: 4px; background-color: ${themeLineColor}; border-radius: 2px; z-index: 1; transition: width 0.5s ease;"></div>
-                            ${timelineStepsHtml}
-                        </div>
-                    </div>
-
-                    <!-- Items Display Container Rows -->
-                    <div style="padding: 10px 20px;">`;
-
-
-                if (order.items && Array.isArray(order.items)) {
-                    order.items.forEach((item) => {
-                        historyHtml += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #f1f1f1; padding: 12px 0; flex-wrap: wrap; gap: 10px;">
-                            <div style="display: flex; align-items: center;">
-                                <img src="${item.image || "images/Logo.png"}" alt="Thumb" style="width:45px; height:45px; object-fit:cover; border-radius:4px; margin-right:12px; border:1px solid #eee;">
-                                <div><h4 style="margin:0; color:#051532; font-size:14px; font-weight:bold;">${item.name || "Premium Item"}</h4></div>
-                            </div>
-                            <div style="text-align: right; font-size: 13px;">
-                                <p style="margin:0; color:#333;">Qty: <strong>${item.quantity}</strong></p>
-                                <p style="margin:1px 0 0 0; color:#777; font-size:11px;">Price: ₹${parseFloat(item.price).toFixed(2)}</p>
-                            </div>
-                        </div>`;
-                    });
-                }
-
-                historyHtml += `
-        <!-- Bottom Action Row -->
-        <div style="padding: 12px 20px 5px 0; display: flex; justify-content: flex-end; align-items: center; border-top: 1px dashed #eee; margin-top: 10px;">
-            ${actionButtonHtml}
-        </div>
-    </div></div>`;
             });
 
             historyContainer.innerHTML = historyHtml;

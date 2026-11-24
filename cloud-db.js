@@ -1,3 +1,7 @@
+window.EMAILJS_SERVICE_ID = 'service_tju7vgl';
+window.EMAILJS_TEMPLATE_ID = 'template_sd8xdzm';
+window.EMAILJS_PUBLIC_KEY = 'oEsfnza8TzSc7dMTy';
+
 // cloud-db.js — Permanent Cloud Vault for GitHub Pages & Local file:/// (Immune to Browser History Clear)
 window.FIREBASE_DB_URL = 'https://mujaddidi-collection-default-rtdb.asia-southeast1.firebasedatabase.app/'; // <-- PASTE YOUR FIREBASE URL HERE
 
@@ -23,6 +27,33 @@ window.CloudDB = {
     safeKey(str) {
         return String(str || '').trim().toLowerCase().replace(/[.#$\[\]\/]/g, '_');
     },
+
+    // Save user's shopping cart to Firebase so Website & Mobile App share the exact same cart
+    async saveCart(username, cartItems) {
+        if (!username) return;
+        const key = this.safeKey(username);
+        await fetch(`${window.FIREBASE_DB_URL}/storeData/carts/${key}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cartItems || [])
+        });
+    },
+
+    // Fetch user's synced shopping cart from Firebase
+    async getCart(username) {
+        if (!username) return [];
+        const key = this.safeKey(username);
+        try {
+            const res = await fetch(`${window.FIREBASE_DB_URL}/storeData/carts/${key}.json`);
+            if (!res.ok) return [];
+            const data = await res.json();
+            return Array.isArray(data) ? data : (data ? Object.values(data) : []);
+        } catch (err) {
+            console.warn('Cart fetch error:', err);
+            return [];
+        }
+    },
+
 
     // Record every user action permanently in Firebase (never deleted)
     async logActivity(username, action, details = '') {
@@ -211,5 +242,71 @@ window.CloudDB = {
             body: JSON.stringify(updatedFields)
         });
         await this.logActivity(actorName, 'Updated Order', `Order #MJD-${orderId} → ${updatedFields.status}`);
-    }
+    },
+
+    async sendEmailOTP(email, name = 'Customer') {
+        const cleanEmail = email.trim().toLowerCase();
+        const key = this.safeKey(cleanEmail);
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
+        const expiresAt = Date.now() + 5 * 60 * 1000;
+
+        // 1. Save OTP in Firebase Realtime Database
+        await fetch(`${window.FIREBASE_DB_URL}/storeData/otps/${key}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ otp, expiresAt, email: cleanEmail }),
+        });
+
+        // 2. Send 6-Digit OTP via EmailJS REST API
+        const emailJsUrl = 'https://' + '://emailjs.com' + '/api/v1.0/email/send';
+        const res = await fetch(emailJsUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                service_id: window.EMAILJS_SERVICE_ID,
+                template_id: window.EMAILJS_TEMPLATE_ID,
+                user_id: window.EMAILJS_PUBLIC_KEY,
+                template_params: {
+                    to_email: cleanEmail,
+                    to_name: name || 'Customer',
+                    otp_code: otp,
+                },
+            }),
+        });
+
+        const responseText = await res.text();
+        if (!res.ok) {
+            throw new Error(`EmailJS (${res.status}): ${responseText}`);
+        }
+
+        // 3. Trigger Browser System Notification Banner
+        if ('Notification' in window) {
+            const perm = await Notification.requestPermission();
+            if (perm === 'granted') {
+                new Notification('Mujaddidi Collection • Verification OTP', {
+                    body: `Your 6-digit OTP (${otp}) has been sent to ${cleanEmail}.`,
+                    icon: 'images/Logo resized.png'
+                });
+            }
+        }
+        return true;
+    },
+
+    async verifyEmailOTP(email, enteredOtp) {
+        const cleanEmail = email.trim().toLowerCase();
+        const key = this.safeKey(cleanEmail);
+        const res = await fetch(`${window.FIREBASE_DB_URL}/storeData/otps/${key}.json`);
+        const record = await res.json();
+
+        if (!record || !record.otp) return false;
+        if (Date.now() > record.expiresAt) return false;
+        if (String(record.otp) !== String(enteredOtp).trim()) return false;
+
+        await fetch(`${window.FIREBASE_DB_URL}/storeData/otps/${key}.json`, { method: 'DELETE' });
+        return true;
+    },
+
+
 };
+
+
