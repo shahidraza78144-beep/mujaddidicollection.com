@@ -313,6 +313,68 @@
     </section>
 
     </div>
+
+    <!-- Flipkart-Style Return / Exchange Request Modal -->
+    <div id="returnExchangeModal"
+        style="display:none; position:fixed; inset:0; background:rgba(5,21,50,0.65); z-index:9999; justify-content:center; align-items:center; padding:16px; font-family:sans-serif;">
+        <div
+            style="background:#ffffff; width:100%; max-width:460px; border-radius:12px; border-top:6px solid #051532; padding:24px; box-shadow:0 15px 35px rgba(0,0,0,0.25); position:relative;">
+            <button onclick="closeReturnModal()"
+                style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:22px; color:#777; cursor:pointer;">&times;</button>
+
+            <h3 style="margin:0 0 4px 0; color:#051532; font-size:19px;">Return / Exchange Request</h3>
+            <p id="retModalOrderLabel" style="margin:0 0 16px 0; color:#777; font-size:12px; font-weight:bold;">Order
+                #MJD-000000</p>
+
+            <!-- 1. Choose Return vs Exchange -->
+            <label style="display:block; font-size:12px; font-weight:bold; color:#051532; margin-bottom:6px;">1. SELECT
+                REQUEST TYPE</label>
+            <div style="display:flex; gap:10px; margin-bottom:16px;">
+                <button type="button" id="btnTypeReturn" onclick="selectRequestType('Return')"
+                    style="flex:1; padding:10px; border-radius:8px; border:2px solid #051532; background:#051532; color:#ffffff; font-weight:bold; font-size:13px; cursor:pointer;">
+                    <i class="fa fa-undo"></i> Return (Refund)
+                </button>
+                <button type="button" id="btnTypeExchange" onclick="selectRequestType('Exchange')"
+                    style="flex:1; padding:10px; border-radius:8px; border:2px solid #cbd5e1; background:#ffffff; color:#051532; font-weight:bold; font-size:13px; cursor:pointer;">
+                    <i class="fa fa-exchange"></i> Exchange Item
+                </button>
+            </div>
+
+            <!-- 2. Dynamic Reason Dropdown (Changes based on Return vs Exchange) -->
+            <label id="retReasonLabel"
+                style="display:block; font-size:12px; font-weight:bold; color:#051532; margin-bottom:6px;">2. WHY ARE
+                YOU RETURNING THIS PRODUCT?</label>
+            <select id="retReasonSelect"
+                style="width:100%; padding:10px; border-radius:8px; border:1.5px solid #cbd5e1; font-size:13px; color:#051532; margin-bottom:14px; background:#fdfaf4;"></select>
+
+            <!-- 3. Actual Problem Textarea -->
+            <label style="display:block; font-size:12px; font-weight:bold; color:#051532; margin-bottom:6px;">3.
+                DESCRIBE THE ACTUAL PROBLEM</label>
+            <textarea id="retProblemInput" rows="3"
+                placeholder="Please describe the issue clearly (e.g., damaged cover, size too tight, wrong fragrance sent)..."
+                style="width:100%; padding:10px; border-radius:8px; border:1.5px solid #cbd5e1; font-size:13px; color:#051532; margin-bottom:16px; box-sizing:border-box; font-family:sans-serif;"></textarea>
+
+            <!-- Submit Button -->
+            <button type="button" id="submitReturnBtn" onclick="submitReturnExchangeRequest()"
+                style="width:100%; background:#eba345; color:#051532; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; text-transform:uppercase;">
+                Submit Request & Get Reference No.
+            </button>
+
+            <!-- Confirmation Reference Box (Shown after submission) -->
+            <div id="retConfirmationBox"
+                style="display:none; margin-top:14px; background:#e6f4ea; border:1.5px solid #137333; border-radius:8px; padding:14px; text-align:center;">
+                <p style="margin:0; color:#137333; font-weight:bold; font-size:13px;">✅ Request Submitted Successfully!
+                </p>
+                <p id="retRefNumberText"
+                    style="margin:6px 0 4px 0; color:#051532; font-size:17px; font-weight:bold; font-family:monospace;">
+                </p>
+                <p style="margin:0; color:#555; font-size:11px;">Save this Reference Number. You can track your
+                    refund/exchange status right on your order card.</p>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 </section>
 
@@ -715,6 +777,12 @@
                             actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer;">Return / Exchange</button>`;
                         } else if (isShippedOrBeyond) {
                             actionButtonHtml = `<span style="background: #eef2ff; color: #051532; padding: 8px 12px; font-size: 12px; font-weight: bold; border-radius: 4px;"><i class="fa fa-lock"></i> Product is shipped and now it cannot cancel</span>`;
+                        } else if (isDelivered) {
+                            if (order.returnRefId) {
+                                actionButtonHtml = `<span style="background:#fff3cd; color:#b06000; border:1px solid #eba345; padding:8px 14px; font-size:12px; font-weight:bold; border-radius:4px;">🔄 ${order.returnType} (#${order.returnRefId}): ${order.returnStatus || 'Pending Review'}</span>`;
+                            } else {
+                                actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer;">Return / Exchange</button>`;
+                            }
                         }
 
                         if (isPrepaid || isShippedOrBeyond) {
@@ -869,6 +937,138 @@
             window.location.reload();
         } else {
             alert("Invalid input parameters. Please type exactly 'RETURN' or 'EXCHANGE'.");
+        }
+    };
+
+</script>
+
+
+<script>
+
+    // ============================================================
+    // RETURN & EXCHANGE REQUEST SYSTEM (SYNCED WITH ADMIN PANEL)
+    // ============================================================
+
+    let activeReturnOrderId = null;
+    let selectedReqType = 'Return';
+
+    const RETURN_REASONS = [
+        "Received damaged / torn / broken item",
+        "Wrong product delivered",
+        "Product quality not as expected",
+        "Item or accessory missing from package",
+        "Ordered by mistake / no longer needed"
+    ];
+
+    const EXCHANGE_REASONS = [
+        "Size / fitting issue (need different size)",
+        "Want a different color / style / fragrance",
+        "Received defective piece (need replacement)",
+        "Wrong item sent (exchange for original item)"
+    ];
+
+    window.returnExchangeOrder = function (orderId) {
+        activeReturnOrderId = orderId;
+        document.getElementById('retModalOrderLabel').textContent = `Order ID: #MJD-${orderId}`;
+        document.getElementById('retProblemInput').value = '';
+        document.getElementById('retConfirmationBox').style.display = 'none';
+        document.getElementById('submitReturnBtn').style.display = 'block';
+        selectRequestType('Return');
+        document.getElementById('returnExchangeModal').style.display = 'flex';
+    };
+
+    window.closeReturnModal = function () {
+        document.getElementById('returnExchangeModal').style.display = 'none';
+        renderOrderHistory();
+    };
+
+    window.selectRequestType = function (type) {
+        selectedReqType = type;
+        const btnRet = document.getElementById('btnTypeReturn');
+        const btnExc = document.getElementById('btnTypeExchange');
+        const label = document.getElementById('retReasonLabel');
+        const select = document.getElementById('retReasonSelect');
+
+        if (type === 'Return') {
+            btnRet.style.background = '#051532'; btnRet.style.color = '#fff'; btnRet.style.borderColor = '#051532';
+            btnExc.style.background = '#fff'; btnExc.style.color = '#051532'; btnExc.style.borderColor = '#cbd5e1';
+            label.textContent = '2. WHY ARE YOU RETURNING THIS PRODUCT?';
+            select.innerHTML = RETURN_REASONS.map(r => `<option value="${r}">${r}</option>`).join('');
+        } else {
+            btnExc.style.background = '#051532'; btnExc.style.color = '#fff'; btnExc.style.borderColor = '#051532';
+            btnRet.style.background = '#fff'; btnRet.style.color = '#051532'; btnRet.style.borderColor = '#cbd5e1';
+            label.textContent = '2. WHAT IS THE REASON FOR EXCHANGING?';
+            select.innerHTML = EXCHANGE_REASONS.map(r => `<option value="${r}">${r}</option>`).join('');
+        }
+    };
+
+    window.submitReturnExchangeRequest = async function () {
+        const reason = document.getElementById('retReasonSelect').value;
+        const problem = document.getElementById('retProblemInput').value.trim();
+        const currentUser = localStorage.getItem('activeUserSession') || 'Customer';
+
+        if (!problem) {
+            alert("Please describe the actual problem before submitting.");
+            return;
+        }
+
+        const btn = document.getElementById('submitReturnBtn');
+        btn.disabled = true;
+        btn.textContent = 'Submitting Request...';
+
+        try {
+            const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
+            const targetOrder = centralOrders.find(o => String(o.orderId) === String(activeReturnOrderId)) || {};
+
+            const prefix = selectedReqType === 'Return' ? 'RET' : 'EXC';
+            const refId = `${prefix}-${Math.floor(100000 + Math.random() * 900000)}`;
+
+            const requestPayload = {
+                refId,
+                orderId: activeReturnOrderId,
+                type: selectedReqType,
+                reason,
+                problem,
+                customerUser: currentUser,
+                customerName: targetOrder.customer?.name || currentUser,
+                itemsSummary: targetOrder.itemsDescription || 'Order Items',
+                amount: targetOrder.totalPaid || targetOrder.totalAmount || 0,
+                status: 'Pending Review',
+                source: 'Website',
+                date: new Date().toLocaleString('en-IN'),
+                timestamp: Date.now()
+            };
+
+            // 1. Save Return/Exchange Request in Firebase
+            await fetch(`${window.FIREBASE_DB_URL}/storeData/returnRequests/${refId}.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestPayload)
+            });
+
+            // 2. Link Reference ID & Status onto the Order record
+            await fetch(`${window.FIREBASE_DB_URL}/storeData/orders/${activeReturnOrderId}.json`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    returnRefId: refId,
+                    returnType: selectedReqType,
+                    returnStatus: 'Pending Review'
+                })
+            });
+
+            if (window.CloudDB) {
+                await CloudDB.logActivity(currentUser, `Requested ${selectedReqType}`, `Ref #${refId} for Order #${activeReturnOrderId}`);
+            }
+
+            btn.style.display = 'none';
+            document.getElementById('retRefNumberText').textContent = `Reference No: #${refId}`;
+            document.getElementById('retConfirmationBox').style.display = 'block';
+        } catch (err) {
+            alert("Error submitting request: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Submit Request & Get Reference No.';
         }
     };
 

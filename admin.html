@@ -299,12 +299,12 @@
             <div id="authErrorMessage" class="auth-error">Invalid Security Key! Access Denied.</div>
         </div>
     </div>
-    <!-- 2. DATA WORKSPACE VIEWPANELS -->
+    <!-- 2. DATA WORKSPACE VIEWPANELS WITH LEFT SIDEBAR -->
     <div id="adminDashboardContent">
         <header>
             <h1>Mujaddidi Collection <span>Panel Dashboard</span></h1>
             <div class="header-actions">
-                <button class="refresh-btn" onclick="loadDashboardData()">
+                <button class="refresh-btn" onclick="loadDashboardData(); loadReturnExchangeRequests();">
                     <i class="fa fa-refresh"></i> Refresh
                 </button>
                 <button class="logout-btn" onclick="terminateAdminSession()">
@@ -313,69 +313,120 @@
             </div>
         </header>
 
-        <div class="container">
-            <!-- Counter Analytics Summary Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <i class="fa fa-users"></i>
-                    <div class="stat-info">
-                        <h3>Registered Customers</h3>
-                        <p id="totalUsersCount">0</p>
+        <div style="display: flex; min-height: calc(100vh - 70px); font-family: sans-serif;">
+            <!-- LEFT SIDEBAR MENU -->
+            <aside
+                style="width: 240px; background: #051532; color: #ffffff; padding: 20px 14px; flex-shrink: 0; border-right: 3px solid #eba345;">
+                <p
+                    style="font-size: 11px; color: #eba345; font-weight: bold; letter-spacing: 1px; margin: 0 0 14px 10px; text-transform: uppercase;">
+                    Admin Navigation</p>
+
+                <button type="button" id="navOverviewBtn" onclick="switchAdminTab('overview')"
+                    style="width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 8px; border-radius: 8px; border: none; background: #eba345; color: #051532; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa fa-dashboard"></i> Orders & Accounts
+                </button>
+
+                <button type="button" id="navReturnsBtn" onclick="switchAdminTab('returns')"
+                    style="width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 8px; border-radius: 8px; border: none; background: rgba(255,255,255,0.08); color: #ffffff; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                    <span><i class="fa fa-exchange" style="margin-right: 8px;"></i> Return / Exchange</span>
+                    <span id="sidebarReturnBadge"
+                        style="background: #eba345; color: #051532; padding: 2px 7px; border-radius: 10px; font-size: 11px;">0</span>
+                </button>
+            </aside>
+
+            <!-- MAIN CONTENT AREA -->
+            <div class="container" style="flex: 1; max-width: none; margin: 0; padding: 24px;">
+
+                <!-- VIEW 1: OVERVIEW (STATS, USERS & ORDERS) -->
+                <div id="adminOverviewPanel">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fa fa-users"></i>
+                            <div class="stat-info">
+                                <h3>Registered Customers</h3>
+                                <p id="totalUsersCount">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card orders-card">
+                            <i class="fa fa-shopping-basket"></i>
+                            <div class="stat-info">
+                                <h3>Total Global Orders</h3>
+                                <p id="totalOrdersCount">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <i class="fa fa-address-book"></i> Registered Accounts Data
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Account Username</th>
+                                        <th>Email Address</th>
+                                        <th>Security Verification Password</th>
+                                        <th>Account Designation</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <i class="fa fa-truck"></i> Live Database Order Tracking Queue
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order Identifier ID</th>
+                                        <th>Target Customer Account</th>
+                                        <th>Purchased Items Detail</th>
+                                        <th>Financial Summary Total</th>
+                                        <th>Order Status of Customers</th>
+                                        <th>Customer's Order Date</th>
+                                        <th>Estimated Delivery Date</th>
+                                        <th>Cancel Button for Emergency</th>
+                                        <th>Order Invoice of the Customer</th>
+                                        <th>Send Receipt via Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card orders-card">
-                    <i class="fa fa-shopping-basket"></i>
-                    <div class="stat-info">
-                        <h3>Total Global Orders</h3>
-                        <p id="totalOrdersCount">0</p>
+
+                <!-- VIEW 2: RETURN & EXCHANGE REQUESTS PANEL -->
+                <div id="adminReturnsPanel" style="display: none;">
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <i class="fa fa-exchange"></i> Customer Return & Exchange Requests
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Reference No.</th>
+                                        <th>Order ID & Source</th>
+                                        <th>Customer</th>
+                                        <th>Request Type</th>
+                                        <th>Reason & Actual Problem (Brief)</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>Refunding / Exchanging Status (Admin Control)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="returnsTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Customer User Account Profiles Table Registry Section -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <i class="fa fa-address-book"></i> Registered Accounts Data
-                </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Account Username</th>
-                                <th>Email Address</th>
-                                <th>Security Verification Password</th>
-                                <th>Account Designation</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Global Master Orders Table Tracking Section -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <i class="fa fa-truck"></i> Live Database Order Tracking Queue
-                </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Order Identifier ID</th>
-                                <th>Target Customer Account</th>
-                                <th>Purchased Items Detail</th>
-                                <th>Financial Summary Total</th>
-                                <th>Order Status of Customers</th>
-                                <th>Customer's Order Date</th>
-                                <th>Estimated Delivery Date</th>
-                                <th>Cancel Button for Emergency</th>
-                                <th>Order Invoice of the Customer</th>
-                                <th>Send Receipt via Email</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersTableBody"></tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>
@@ -384,6 +435,131 @@
 
     <script src="https://cloudflare.com"></script>
     <script src="cloud-db.js"></script>
+
+
+    <script>
+        window.switchAdminTab = function (tabName) {
+            const overviewPanel = document.getElementById('adminOverviewPanel');
+            const returnsPanel = document.getElementById('adminReturnsPanel');
+            const btnOverview = document.getElementById('navOverviewBtn');
+            const btnReturns = document.getElementById('navReturnsBtn');
+
+            if (tabName === 'returns') {
+                overviewPanel.style.display = 'none';
+                returnsPanel.style.display = 'block';
+                btnReturns.style.background = '#eba345';
+                btnReturns.style.color = '#051532';
+                btnOverview.style.background = 'rgba(255,255,255,0.08)';
+                btnOverview.style.color = '#ffffff';
+                loadReturnExchangeRequests();
+            } else {
+                overviewPanel.style.display = 'block';
+                returnsPanel.style.display = 'none';
+                btnOverview.style.background = '#eba345';
+                btnOverview.style.color = '#051532';
+                btnReturns.style.background = 'rgba(255,255,255,0.08)';
+                btnReturns.style.color = '#ffffff';
+            }
+        };
+
+        window.loadReturnExchangeRequests = async function () {
+            const tbody = document.getElementById('returnsTableBody');
+            const badge = document.getElementById('sidebarReturnBadge');
+            if (!tbody) return;
+
+            try {
+                const res = await fetch(`${window.FIREBASE_DB_URL}/storeData/returnRequests.json`);
+                const raw = await res.json();
+                const list = raw ? Object.values(raw).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)) : [];
+
+                if (badge) badge.textContent = list.length;
+
+                if (list.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="empty-message">No Return or Exchange requests submitted yet.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = list.map(req => {
+                    const isReturn = (req.type || '').toLowerCase() === 'return';
+                    const typeBadge = isReturn
+                        ? `<span style="background:#fce8e6; color:#c5221f; padding:4px 9px; border-radius:6px; font-weight:bold; font-size:11px;">↩️ RETURN</span>`
+                        : `<span style="background:#eef2ff; color:#051532; padding:4px 9px; border-radius:6px; font-weight:bold; font-size:11px;">🔄 EXCHANGE</span>`;
+
+                    const srcBadge = (req.source || '').toLowerCase().includes('app')
+                        ? `<span style="background:#051532; color:#eba345; padding:2px 6px; border-radius:8px; font-size:10px;">📱 App</span>`
+                        : `<span style="background:#eef2ff; color:#051532; padding:2px 6px; border-radius:8px; font-size:10px;">🌐 Web</span>`;
+
+                    const cur = req.status || 'Pending Review';
+                    const isClosed = cur === 'Refund Completed' || cur === 'Exchange Completed' || cur === 'Rejected';
+
+                    return `
+                    <tr>
+                        <td style="font-family:monospace; font-weight:bold; color:#051532;">#${escapeHTML(req.refId)}</td>
+                        <td style="font-weight:bold; color:#051532;">#MJD-${escapeHTML(String(req.orderId))}<br>${srcBadge}</td>
+                        <td style="text-transform:capitalize; font-weight:600;">${escapeHTML(req.customerName || req.customerUser || 'Customer')}</td>
+                        <td>${typeBadge}</td>
+                        <td style="max-width:260px; font-size:12px; line-height:1.4;">
+                            <strong style="color:#051532;">Reason:</strong> ${escapeHTML(req.reason || '')}<br>
+                            <strong style="color:#c5221f;">Problem:</strong> ${escapeHTML(req.problem || '')}<br>
+                            <span style="color:#777; font-size:11px;">Items: ${escapeHTML(req.itemsSummary || '')}</span>
+                        </td>
+                        <td style="font-weight:bold; color:#051532;">₹${parseFloat(req.amount || 0).toFixed(2)}</td>
+                        <td style="font-size:12px; color:#555;">${escapeHTML(req.date || '')}</td>
+                        <td>
+                            ${isClosed ? `
+                                <span style="background:#e6f4ea; color:#137333; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:bold; display:inline-block;">
+                                    🔒 ${escapeHTML(cur)}
+                                </span>
+                            ` : `
+                                <select onchange="updateReturnRequestStatus('${escapeHTML(req.refId)}', '${escapeHTML(String(req.orderId))}', this.value)"
+                                        style="padding:6px 8px; border-radius:6px; border:1.5px solid #051532; background:#fdfaf4; color:#051532; font-weight:bold; font-size:12px; cursor:pointer;">
+                                    <option value="Pending Review" ${cur === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
+                                    <option value="Approved - Pickup Scheduled" ${cur === 'Approved - Pickup Scheduled' ? 'selected' : ''}>Approved - Pickup Scheduled</option>
+                                    <option value="Exchanging - Replacement Dispatched" ${cur === 'Exchanging - Replacement Dispatched' ? 'selected' : ''}>Exchanging - Replacement Dispatched</option>
+                                    <option value="Refunding - Refund Initiated" ${cur === 'Refunding - Refund Initiated' ? 'selected' : ''}>Refunding - Refund Initiated</option>
+                                    <option value="Exchange Completed" ${cur === 'Exchange Completed' ? 'selected' : ''}>Exchange Completed (Lock)</option>
+                                    <option value="Refund Completed" ${cur === 'Refund Completed' ? 'selected' : ''}>Refund Completed (Lock)</option>
+                                    <option value="Rejected" ${cur === 'Rejected' ? 'selected' : ''}>Rejected (Lock)</option>
+                                </select>
+                            `}
+                        </td>
+                    </tr>
+                `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="8" style="color:#c5221f;">Error loading requests: ${err.message}</td></tr>`;
+            }
+        };
+
+        window.updateReturnRequestStatus = async function (refId, orderId, newStatus) {
+            try {
+                await fetch(`${window.FIREBASE_DB_URL}/storeData/returnRequests/${refId}.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus, updatedAt: new Date().toLocaleString('en-IN') })
+                });
+
+                await fetch(`${window.FIREBASE_DB_URL}/storeData/orders/${orderId}.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ returnStatus: newStatus })
+                });
+
+                if (window.CloudDB) {
+                    await CloudDB.logActivity('Admin', 'Updated Return/Exchange Status', `Ref #${refId} -> ${newStatus}`);
+                }
+
+                alert(`Request #${refId} updated to "${newStatus}"!`);
+                loadReturnExchangeRequests();
+            } catch (err) {
+                alert('Error updating request: ' + err.message);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadReturnExchangeRequests, 1200);
+        });
+    </script>
 
 
 
@@ -468,11 +644,8 @@
             } else {
                 ordersTableBody.innerHTML = centralOrdersQueueList.map((order, index) => {
                     const customerReferenceName = (order.customer && order.customer.accountUser) ? order.customer.accountUser : 'Guest/Anonymous';
-
-                    // 1. ORDER ID SCANNER
                     const trackingOrderId = order.id || order.orderId || order.orderNumber || order.invoiceNo || `REC-${1000 + index}`;
 
-                    // 2. PRODUCTS DESCRIPTION GENERATOR
                     let targetItemsSummary = "Items Data Missing";
                     let itemsArray = order.items || order.cart || [];
 
@@ -484,82 +657,121 @@
                         targetItemsSummary = order.items;
                     } else if (order.status) {
                         targetItemsSummary = order.status;
-                    };
+                    }
 
-                    // 3. SMART AUTO-CALCULATING FINANCIAL SUMMARY ENGINE (UPDATED FOR INR)
                     let finalPrice = 0;
-
-                    // Route A: Try to find a direct price property tag first
                     const directPrice = order.totalAmount || order.totalPrice || order.total || order.grandTotal || order.price || order.subtotal;
 
                     if (directPrice && parseFloat(directPrice) > 0) {
                         finalPrice = String(directPrice).replace(/[^\d.]/g, '');
-                    }
-                    // Route B BACKUP: Calculate dynamically from item list array
-                    else if (Array.isArray(itemsArray) && itemsArray.length > 0) {
+                    } else if (Array.isArray(itemsArray) && itemsArray.length > 0) {
                         itemsArray.forEach(item => {
                             const itemPriceRaw = item.price || item.rate || item.cost || 0;
                             const cleanedItemPrice = parseFloat(String(itemPriceRaw).replace(/[^\d.]/g, '')) || 0;
                             const itemQuantity = parseInt(item.quantity || item.qty || 1, 10);
-
                             finalPrice += (cleanedItemPrice * itemQuantity);
                         });
                     }
 
+                    // Source Badge (Mobile App vs Website)
+                    const isAppOrder = (order.source || '').toLowerCase().includes('app');
+                    const sourceBadge = isAppOrder
+                        ? `<span style="background:#051532; color:#eba345; padding:3px 8px; border-radius:12px; font-size:10px; font-weight:bold; display:inline-block; margin-top:4px;">📱 App</span>`
+                        : `<span style="background:#eef2ff; color:#051532; border:1px solid #cbd5e1; padding:3px 8px; border-radius:12px; font-size:10px; font-weight:bold; display:inline-block; margin-top:4px;">🌐 Website</span>`;
 
-                    // Format output neatly to 2 decimal places with the INR label
                     const formattedTotal = parseFloat(finalPrice).toFixed(2);
                     const targetPriceAmount = `INR ${formattedTotal}`;
-
+                    const currentStatus = order.status || 'Placed';
                     return `
                         <tr>
-                            <td style="font-family: monospace; font-weight: bold; color: #051532;">#${escapeHTML(String(trackingOrderId))}</td>
+                            <td style="font-family: monospace; font-weight: bold; color: #051532;">
+                                #${escapeHTML(String(trackingOrderId))}<br>${sourceBadge}
+                            </td>
                             <td style="text-transform: capitalize; font-weight:600;">${escapeHTML(customerReferenceName)}</td>
                             <td>${escapeHTML(targetItemsSummary)}</td>
                             <td style="font-weight: bold; color: #051532;">${escapeHTML(String(targetPriceAmount))}</td>
-                            <td style="font-weight: bold; color: #051532;"><span class="badge badge-order">${escapeHTML(order.status)}</span></td>
-                            <td style="font-weight: bold; color: #051532;">${escapeHTML(order.date)}</td >
+                                                       <td style="font-weight: bold; color: #051532;">
+                                ${currentStatus.includes('Cancelled') ? `
+                                    <span style="background: #fce8e6; color: #c5221f; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block; border: 1px solid #f5c2c7;">
+                                        🔒 Cancelled (Locked)
+                                    </span>
+                                ` : currentStatus === 'Delivered' ? `
+                                    <span style="background: #e6f4ea; color: #137333; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block; border: 1px solid #b7e1cd;">
+                                        ✅ Delivered (Locked)
+                                    </span>
+                                ` : `
+                                    <select onchange="updateManualOrderStatus('${escapeHTML(String(trackingOrderId))}', this.value)"
+                                            style="padding: 6px 8px; border-radius: 6px; border: 1.5px solid #051532; background: #fdfaf4; color: #051532; font-weight: bold; font-size: 12px; cursor: pointer;">
+                                        <option value="Placed" ${currentStatus === 'Placed' ? 'selected' : ''}>Placed</option>
+                                        <option value="Shipped" ${currentStatus === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                        <option value="Processing" ${currentStatus === 'Processing' ? 'selected' : ''}>Processing</option>
+                                        <option value="Out for Delivery" ${currentStatus === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                                        <option value="Delivered" ${currentStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                                        <option value="Cancelled - by Mujaddidi Collection Seller">Cancelled</option>
+                                    </select>
+                                `}
+                            </td>
+
+                            <td style="font-weight: bold; color: #051532;">${escapeHTML(order.date)}</td>
                             <td style="font-weight: bold; color: #137333;">${escapeHTML(order.deliveryDate || (!isNaN(new Date(order.date)) ? new Date(new Date(order.date).setDate(new Date(order.date).getDate() + 15)).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : '15 Days from booking'))}</td>
                             <td style="font-family: monospace; font-weight: bold; color: #051532;">
-    ${order.status === 'Cancelled - by Mujaddidi Collection Seller' ? `
-        <span style="font-size:12px; color:#c5221f; font-weight:bold; text-transform:uppercase;">Cancelled by You</span>
-    ` : order.status === 'Cancelled' ? `
-        <span style="font-size:12px; color:#c5221f; font-weight:bold; text-transform:uppercase;">Cancelled by Customer</span>
-    ` : (order.status === 'Placed' || order.status === 'Shipped' || order.status === 'Processing' || order.status === 'In Transit') ? `
-        <button type="button"
-                onclick="cancelUserOrder('${escapeHTML(String(trackingOrderId))}')"
-                style="background-color: #c5221f; color: #ffffff; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">
-            Cancel Order
-        </button>
-    ` : `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${escapeHTML(order.status)}</span>`}
-</td>
+                                ${order.status === 'Cancelled - by Mujaddidi Collection Seller' ? `
+                                    <span style="font-size:12px; color:#c5221f; font-weight:bold; text-transform:uppercase;">Cancelled by You</span>
+                                ` : order.status === 'Cancelled' ? `
+                                    <span style="font-size:12px; color:#c5221f; font-weight:bold; text-transform:uppercase;">Cancelled by Customer</span>
+                                ` : (currentStatus === 'Placed' || currentStatus === 'Shipped' || currentStatus === 'Processing' || currentStatus === 'In Transit') ? `
+                                    <button type="button"
+                                            onclick="cancelUserOrder('${escapeHTML(String(trackingOrderId))}')"
+                                            style="background-color: #c5221f; color: #ffffff; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">
+                                        Cancel Order
+                                    </button>
+                                ` : `<span style="font-size:12px; color:#777; font-weight:bold; text-transform:uppercase;">${escapeHTML(currentStatus)}</span>`}
+                            </td>
                             <td style="font-weight: bold; color: #051532;">
-                            <button type="button"                    
-                            class="print-receipt-btn"
-                            onclick="triggerReceiptPrint(this)"
-                            data-order-id="${escapeHTML(String(trackingOrderId))}"
-                            data-date="${escapeHTML(order.date || 'N/A')}"
-                            data-total="${escapeHTML(String(order.totalAmount || targetPriceAmount || 0))}"
-                            data-address="${escapeHTML(order.shippingAddress || 'No Address Recorded')}"
-                            style="background: #eba345; color: #051532; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase;">
-                            <i class="fa fa-print"></i> Print Receipt
-                            </button>
+                                <button type="button"
+                                        class="print-receipt-btn"
+                                        onclick="triggerReceiptPrint(this)"
+                                        data-order-id="${escapeHTML(String(trackingOrderId))}"
+                                        data-date="${escapeHTML(order.date || 'N/A')}"
+                                        data-total="${escapeHTML(String(order.totalAmount || targetPriceAmount || 0))}"
+                                        data-address="${escapeHTML(order.shippingAddress || 'No Address Recorded')}"
+                                        style="background: #eba345; color: #051532; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase;">
+                                    <i class="fa fa-print"></i> Print Receipt
+                                </button>
                             </td>
                             <td style="font-family: monospace; font-weight: bold; color: #051532;">
-    <button type="button"
-            onclick="sendemailReceipt('${escapeHTML(String(trackingOrderId))}')"
-            style="background-color: #25D366; color: #ffffff; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;">
-        <i class="fa fa-envelope"></i> Send Receipt
-    </button>
-</td>
-    
-
-
-                        </tr >
+                                <button type="button"
+                                        onclick="sendemailReceipt('${escapeHTML(String(trackingOrderId))}')"
+                                        style="background-color: #25D366; color: #ffffff; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;">
+                                    <i class="fa fa-envelope"></i> Send Receipt
+                                </button>
+                            </td>
+                        </tr>
                     `;
                 }).join('');
             }
         }
+        // Manual Status Updater (Syncs instantly to Firebase -> Website + Mobile App)
+        window.updateManualOrderStatus = async function (orderId, newStatus) {
+            try {
+                await fetch(`${window.FIREBASE_DB_URL}/storeData/orders/${orderId}.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status: newStatus,
+                        updatedAt: new Date().toLocaleString('en-IN')
+                    })
+                });
+                if (window.CloudDB) {
+                    await CloudDB.logActivity('Admin', 'Updated Order Status', `Order #${orderId} -> ${newStatus}`);
+                    await CloudDB.syncAll();
+                }
+                alert(`Order #${orderId} status updated to "${newStatus}"!`);
+                location.reload();
+            } catch (err) {
+                alert('Error updating status: ' + err.message);
+            }
+        };
 
         // Security escaping utility to strip unauthorized raw user code strings
         function escapeHTML(str) {
