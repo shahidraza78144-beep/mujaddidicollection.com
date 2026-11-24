@@ -641,12 +641,13 @@
 
 
         // 4. LOWER CHRONOLOGICAL TIMELINE INVOICES (WITH RED CANCEL OVERRIDE)
-        function renderOrderHistory() {
-            if (!historyContainer) return;
+        async function renderOrderHistory() {
+            const container = document.getElementById('orderHistoryContainer');
+            if (!container) return;
 
             const currentSessionUser = localStorage.getItem('activeUserSession');
             if (!currentSessionUser) {
-                historyContainer.innerHTML = `
+                container.innerHTML = `
                 <div style="padding: 50px 20px; text-align: center; border: 2px dashed #eee; border-radius: 8px; background: #fafafa; font-family: sans-serif;">
                     <i class="fa fa-lock" style="font-size: 40px; color: #051532; margin-bottom: 15px; display: block;"></i>
                     <h3 style="color: #051532; margin: 0 0 5px 0; font-size: 18px;">Login Required</h3>
@@ -655,67 +656,141 @@
                 return;
             }
 
-            const centralOrders = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-            let userOrders = centralOrders.filter(order => order.customer && order.customer.accountUser.toLowerCase() === currentSessionUser.toLowerCase());
+            container.innerHTML = `<p style="text-align:center; color:#777; padding:30px;">Loading your synced orders...</p>`;
 
-            if (userOrders.length === 0) {
-                historyContainer.innerHTML = `
-                <div style="padding: 50px 20px; text-align: center; border: 2px dashed #eee; border-radius: 8px; background: #fafafa; font-family: sans-serif;">
-                    <i class="fa fa-shopping-bag" style="font-size: 40px; color: #ccc; margin-bottom: 15px; display: block;"></i>
-                    <h3 style="color: #051532; margin: 0 0 10px 0; font-size: 18px;">No Orders Placed Yet</h3>
-                    <a href="PRODUCTS.html" style="background-color: #eba345; color: #051532; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block;">Go Shopping</a>
-                </div>`;
-                return;
-            }
+            try {
+                const res = await fetch(`${window.FIREBASE_DB_URL}/storeData/orders.json`);
+                const rawOrders = await res.json();
+                const allOrders = rawOrders ? Object.values(rawOrders) : [];
+                localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(allOrders));
 
-            let historyHtml = '';
-            userOrders.forEach((order) => {
-                let orderStatus = order.status || 'Placed';
-                let isCancelled = (orderStatus === 'Cancelled' || orderStatus === 'Cancelled - by Mujaddidi Collection Seller');
-                // 1. Read manual status directly from Firebase (controlled by Admin)
-                orderStatus = order.status || 'Placed';
-                const statusLower = orderStatus.toLowerCase();
-                const isShippedOrBeyond =
-                    statusLower === 'shipped' ||
-                    statusLower === 'processing' ||
-                    statusLower === 'out for delivery' ||
-                    statusLower === 'in transit' ||
-                    statusLower === 'delivered';
+                const userLower = currentSessionUser.trim().toLowerCase();
+                const userOrders = allOrders
+                    .filter(order => {
+                        if (!order || !order.customer) return false;
+                        const acct = (order.customer.accountUser || '').trim().toLowerCase();
+                        const mail = (order.customer.email || '').trim().toLowerCase();
+                        return acct === userLower || mail === userLower;
+                    })
+                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-                const isPrepaid =
-                    (order.paymentMethod || '').toLowerCase().includes('upi') ||
-                    (order.paymentMethod || '').toLowerCase().includes('online') ||
-                    (order.paymentMethod || '').toLowerCase().includes('prepaid');
-
-                // 2. Build Action Buttons (Cancel / Return / Shipped Lock + Print Receipt)
-                let actionButtonHtml = '';
-
-                if (!isCancelled) {
-                    if (statusLower === 'placed') {
-                        actionButtonHtml = `<button onclick="cancelUserOrder('${order.orderId}')" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Cancel Order</button>`;
-                    } else if (statusLower === 'delivered') {
-                        actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s;">Return / Exchange</button>`;
-                    } else if (isShippedOrBeyond) {
-                        actionButtonHtml = `<span style="background: #eef2ff; color: #051532; padding: 8px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa fa-lock"></i> Product is shipped and now it cannot cancel</span>`;
-                    }
-
-                    // Show Print Receipt immediately for Prepaid, or once Shipped for COD
-                    if (isPrepaid || isShippedOrBeyond) {
-                        actionButtonHtml += `
-                    <button class="print-receipt-btn" onclick="triggerReceiptPrint(this)" 
-                            data-order-id="${order.orderId}" 
-                            data-date="${order.date || 'N/A'}" 
-                            data-total="${order.totalAmount || order.totalPaid || 0}" 
-                            data-address="${order.shippingAddress || 'No Address Recorded'}" 
-                            style="background: #eba345; color: #051532; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; transition: 0.2s; text-transform: uppercase;">
-                        <i class="fa fa-print"></i> Print Receipt
-                    </button>`;
-                    }
+                if (userOrders.length === 0) {
+                    container.innerHTML = `
+                    <div style="padding: 50px 20px; text-align: center; border: 2px dashed #eee; border-radius: 8px; background: #fafafa; font-family: sans-serif;">
+                        <i class="fa fa-shopping-bag" style="font-size: 40px; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                        <h3 style="color: #051532; margin: 0 0 10px 0; font-size: 18px;">No Orders Placed Yet</h3>
+                        <a href="PRODUCTS.html" style="background-color: #eba345; color: #051532; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block;">Go Shopping</a>
+                    </div>`;
+                    return;
                 }
-            });
 
-            historyContainer.innerHTML = historyHtml;
+                let historyHtml = '';
+                userOrders.forEach((order) => {
+                    let orderStatus = order.status || 'Placed';
+                    const statusLower = orderStatus.toLowerCase();
+                    const isCancelled = statusLower.includes('cancelled');
+                    const isDelivered = statusLower === 'delivered';
+                    const isShippedOrBeyond =
+                        statusLower === 'shipped' ||
+                        statusLower === 'processing' ||
+                        statusLower === 'out for delivery' ||
+                        statusLower === 'in transit' ||
+                        isDelivered;
+
+                    const isPrepaid =
+                        (order.paymentMethod || '').toLowerCase().includes('upi') ||
+                        (order.paymentMethod || '').toLowerCase().includes('online') ||
+                        (order.paymentMethod || '').toLowerCase().includes('prepaid');
+
+                    const isAppOrder = (order.source || '').toLowerCase().includes('app');
+                    const sourceBadge = isAppOrder
+                        ? `<span style="background:#051532; color:#eba345; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:bold; margin-left:6px;">📱 App</span>`
+                        : `<span style="background:#eef2ff; color:#051532; border:1px solid #cbd5e1; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:bold; margin-left:6px;">🌐 Website</span>`;
+
+                    let actionButtonHtml = '';
+                    if (!isCancelled) {
+                        if (statusLower === 'placed') {
+                            actionButtonHtml = `<button onclick="cancelUserOrder('${order.orderId}')" style="background-color: #c5221f; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer;">Cancel Order</button>`;
+                        } else if (isDelivered) {
+                            actionButtonHtml = `<button onclick="returnExchangeOrder('${order.orderId}')" style="background-color: #051532; color: #ffffff; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer;">Return / Exchange</button>`;
+                        } else if (isShippedOrBeyond) {
+                            actionButtonHtml = `<span style="background: #eef2ff; color: #051532; padding: 8px 12px; font-size: 12px; font-weight: bold; border-radius: 4px;"><i class="fa fa-lock"></i> Product is shipped and now it cannot cancel</span>`;
+                        }
+
+                        if (isPrepaid || isShippedOrBeyond) {
+                            actionButtonHtml += `
+                            <button class="print-receipt-btn" onclick="triggerReceiptPrint(this)"
+                                    data-order-id="${order.orderId}"
+                                    data-date="${order.date || 'N/A'}"
+                                    data-total="${order.totalAmount || order.totalPaid || 0}"
+                                    data-address="${order.shippingAddress || 'No Address Recorded'}"
+                                    style="background: #eba345; color: #051532; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; text-transform: uppercase;">
+                                <i class="fa fa-print"></i> Print Receipt
+                            </button>`;
+                        }
+                    }
+                    let estimatedDeliveryDate = order.deliveryDate || "Within 7–15 Days";
+                    const statesArray = isCancelled
+                        ? ["Placed", "Shipped", "Processing", "Out for Delivery", "Cancelled"]
+                        : ["Placed", "Shipped", "Processing", "Out for Delivery", "Delivered"];
+
+                    let activeIndex = statesArray.findIndex(s => s.toLowerCase() === statusLower);
+                    if (activeIndex === -1) activeIndex = 0;
+
+                    let fillWidth = isCancelled ? 100 : (activeIndex / (statesArray.length - 1)) * 100;
+                    let themeLineColor = isCancelled ? '#c5221f' : '#eba345';
+
+                    let badgeBg = '#fff3cd'; let badgeColor = '#b06000';
+                    if (isDelivered) { badgeBg = '#e6f4ea'; badgeColor = '#137333'; }
+                    if (isCancelled) { badgeBg = '#fce8e6'; badgeColor = '#c5221f'; }
+
+                    let timelineStepsHtml = '';
+                    statesArray.forEach((stateName, index) => {
+                        let circleBg = isCancelled ? '#c5221f' : (index <= activeIndex ? '#eba345' : '#e0e0e0');
+                        let textColor = isCancelled ? '#c5221f' : (index <= activeIndex ? '#051532' : '#999');
+                        let shadowStyle = (!isCancelled && index === activeIndex) ? 'box-shadow: 0 0 0 4px rgba(235, 163, 69, 0.25);' : '';
+
+                        timelineStepsHtml += `
+                        <div style="flex: 1; text-align: center; position: relative; z-index: 2;">
+                            <div style="width: 12px; height: 12px; background-color: ${circleBg}; border-radius: 50%; margin: 0 auto 6px auto; ${shadowStyle}"></div>
+                            <span style="font-size: 8px; font-weight: bold; color: ${textColor}; display: block; text-transform: uppercase; line-height: 1.2;">${stateName}</span>
+                        </div>`;
+                    });
+
+                    const safeTotal = parseFloat(order.totalPaid || order.totalAmount || 0).toFixed(2);
+
+                    historyHtml += `
+                    <div style="border: 1px solid #eee; border-radius: 8px; margin-bottom: 25px; background: #fff; text-align: left; font-family: sans-serif; overflow: hidden;">
+                        <div style="background-color: #fcfcfc; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+                            <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">ORDER ID</span><p style="margin:2px 0 0 0; color:#051532; font-weight:bold; font-size:14px;">#MJD-${order.orderId} ${sourceBadge}</p></div>
+                            <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">DATE PLACED</span><p style="margin:2px 0 0 0; color:#555; font-size:13px;">${order.date || ''}</p></div>
+                            <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">DELIVERY DATE</span><p style="margin:2px 0 0 0; color:#051532; font-weight:bold; font-size:13px;"><i class="fa fa-truck" style="color:${themeLineColor}; margin-right:4px;"></i>${isCancelled ? 'Shipment Cancelled' : estimatedDeliveryDate}</p></div>
+                            <div><span style="color:#777; font-size:11px; font-weight:bold; display:block;">TOTAL PAID</span><p style="margin:2px 0 0 0; color:#eba345; font-weight:bold; font-size:14px;">₹${safeTotal}</p></div>
+                            <div><span style="background-color:${badgeBg}; color:${badgeColor}; padding:6px 14px; border-radius:20px; font-weight:bold; font-size:11px; display:inline-block; text-transform:uppercase;">${orderStatus}</span></div>
+                        </div>
+
+                        <div style="background-color: #fdfdfd; padding: 22px 10px; border-bottom: 1px dashed #eee;">
+                            <div style="position: relative; width: 92%; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="position: absolute; top: 4px; left: 0; width: 100%; height: 4px; background-color: #e0e0e0; border-radius: 2px; z-index: 1;"></div>
+                                <div style="position: absolute; top: 4px; left: 0; width: ${fillWidth}%; height: 4px; background-color: ${themeLineColor}; border-radius: 2px; z-index: 1;"></div>
+                                ${timelineStepsHtml}
+                            </div>
+                        </div>
+
+                            <p style="font-size:13px; color:#051532; font-weight:bold; margin:8px 0;">${order.itemsDescription || ''}</p>
+                            <div style="padding: 12px 0 5px 0; display: flex; justify-content: flex-end; align-items: center; border-top: 1px dashed #eee; margin-top: 10px; flex-wrap: wrap; gap: 8px;">
+                                ${actionButtonHtml}
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                container.innerHTML = historyHtml;
+            } catch (err) {
+                container.innerHTML = `<p style="color:#c5221f; padding:20px;">Error loading orders: ${err.message}</p>`;
+            }
         }
+
 
         renderOrderHistory();
     });
