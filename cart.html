@@ -282,11 +282,32 @@
         // 1. Identify the container using your specific attribute or class signatures safely
         const cartContainer = document.querySelector("[cart-page]") || document.querySelector(".cart-page");
 
-        function displayCartPage() {
+        async function displayCartPage() {
             if (!cartContainer) return;
 
-            // 2. Fetch synchronized item array from your browser memory 
+            const activeUser = localStorage.getItem('activeUserSession');
             let cart = JSON.parse(localStorage.getItem("mujaddidi_cart")) || [];
+
+
+            // If user is logged in, pull their latest synced cart from Firebase (Website + App)
+            if (activeUser && window.CloudDB) {
+                const cloudCart = await CloudDB.getCart(activeUser);
+                if (cloudCart.length > 0) {
+                    cart = cloudCart;
+                    localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+                    localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+
+                    // Sync updated cart to Firebase for Mobile App
+                    const activeUser = localStorage.getItem('activeUserSession');
+                    if (activeUser && window.CloudDB) {
+                        CloudDB.saveCart(activeUser, cart);
+                    }
+
+                } else if (cart.length > 0) {
+                    // Push existing local items up to Firebase if cloud cart was empty
+                    await CloudDB.saveCart(activeUser, cart);
+                }
+            }
 
             // ==========================================
             // CONFIGURATION A: EMPTY CART STATE UI LAYOUT
@@ -424,7 +445,15 @@
 
                     cart[targetIdx].quantity = updatedValue;
                     localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
-                    displayCartPage(); // Instantly update totals on screen
+                    displayCartPage();
+                    localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+
+                    // Sync updated cart to Firebase for Mobile App
+                    const activeUser = localStorage.getItem('activeUserSession');
+                    if (activeUser && window.CloudDB) {
+                        CloudDB.saveCart(activeUser, cart);
+                    }
+                    // Instantly update totals on screen
                 });
             });
 
@@ -436,7 +465,16 @@
 
                     cart.splice(targetIdx, 1);
                     localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
-                    displayCartPage(); // Instantly update view
+                    displayCartPage();
+                    localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+
+                    // Sync updated cart to Firebase for Mobile App
+                    const activeUser = localStorage.getItem('activeUserSession');
+                    if (activeUser && window.CloudDB) {
+                        CloudDB.saveCart(activeUser, cart);
+                    }
+
+                    // Instantly update view
                 });
             });
 
@@ -530,7 +568,7 @@
                     totalPaid: cumulativeTotal,
                     totalAmount: cumulativeTotal,
                     itemsDescription: itemsStringSummary,
-                    status: "Processing",
+                    status: "Placed",
                     items: cart,
                     customer: {
                         name: fullName,
@@ -543,6 +581,14 @@
                 let centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
                 centralQueue.unshift(orderPayload);
                 localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralQueue));
+                localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+
+                // Sync updated cart to Firebase for Mobile App
+                const activeUser = localStorage.getItem('activeUserSession');
+                if (activeUser && window.CloudDB) {
+                    CloudDB.saveCart(activeUser, cart);
+                }
+
 
                 // Save order to Firebase cloud so all devices & admin.html see it
                 await CloudDB.saveOrder(orderPayload);
@@ -688,6 +734,14 @@
                         let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
                         addressBook[userKey] = freshAddressPayload;
                         localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+                        localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+
+                        // Sync updated cart to Firebase for Mobile App
+                        const activeUser = localStorage.getItem('activeUserSession');
+                        if (activeUser && window.CloudDB) {
+                            CloudDB.saveCart(activeUser, cart);
+                        }
+
                     }
                 });
             }
@@ -780,6 +834,14 @@
                 let addressBook = JSON.parse(localStorage.getItem("mujaddidiAddresses")) || {};
                 addressBook[userKey] = freshDataData;
                 localStorage.setItem("mujaddidiAddresses", JSON.stringify(addressBook));
+                localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
+
+                // Sync updated cart to Firebase for Mobile App
+                const activeUser = localStorage.getItem('activeUserSession');
+                if (activeUser && window.CloudDB) {
+                    CloudDB.saveCart(activeUser, cart);
+                }
+
 
                 alert("Address saved successfully!");
                 document.getElementById("addressDisplayView").style.display = "block";
