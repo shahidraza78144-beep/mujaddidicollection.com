@@ -503,108 +503,104 @@
         displayCartPage();
     });
 </script>
-<!-- PART 1: COMPONENT AND CHECKOUT EVENT INITIALIZER -->
+<!-- PART 1: INSTANT SINGLE-CLICK CHECKOUT HANDLER -->
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // 1. Locate the checkout button from the DOM layout safely
-        const checkoutBtn = document.querySelector(".checkout-btn") ||
-            document.getElementById("checkout-submit-btn");
+    let isPlacingWebsiteOrder = false;
 
-        if (checkoutBtn) {
-            // Clear out any old background event listeners by cloning the button element
-            const freshCheckoutBtn = checkoutBtn.cloneNode(true);
-            checkoutBtn.parentNode.replaceChild(freshCheckoutBtn, checkoutBtn);
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest("#checkout-submit-btn, .checkout-btn");
+        if (!btn) return;
 
-            // Bind the new instant-order action to the clean button instance
-            freshCheckoutBtn.addEventListener("click", async (e) => {
-                e.preventDefault();
+        e.preventDefault();
+        if (isPlacingWebsiteOrder) return; // Prevent duplicate orders on rapid clicks
 
-                // 2. Pull products array currently inside the active shopping cart
-                let cart = JSON.parse(localStorage.getItem("mujaddidi_cart")) || [];
+        // 1. Pull active shopping cart
+        let cart = JSON.parse(localStorage.getItem("mujaddidi_cart")) || [];
+        if (cart.length === 0) {
+            alert("Your cart is empty! Please add products before checking out.");
+            return;
+        }
 
-                // Boundary Check: Prevent checkout actions if the cart table is empty
-                if (cart.length === 0) {
-                    alert("Your cart is empty! Please add products before checking out.");
-                    return;
-                }
+        // 2. Read delivery address inputs
+        const fullName = document.getElementById("directShipName") ? document.getElementById("directShipName").value.trim() : "";
+        const phone = document.getElementById("directShipPhone") ? document.getElementById("directShipPhone").value.trim() : "";
+        const street = document.getElementById("directShipStreet") ? document.getElementById("directShipStreet").value.trim() : "";
+        const state = document.getElementById("directShipState") ? document.getElementById("directShipState").value : "";
+        const city = document.getElementById("directShipCity") ? document.getElementById("directShipCity").value : "";
+        const pinCode = document.getElementById("directShipPin") ? document.getElementById("directShipPin").value.trim() : "";
 
-                // 3. READ CUSTOM SELECTIONS FROM DYNAMIC DROPDOWNS DIRECTLY
-                const fullName = document.getElementById("directShipName") ? document.getElementById("directShipName").value.trim() : "";
-                const phone = document.getElementById("directShipPhone") ? document.getElementById("directShipPhone").value.trim() : "";
-                const street = document.getElementById("directShipStreet") ? document.getElementById("directShipStreet").value.trim() : "";
-                const state = document.getElementById("directShipState") ? document.getElementById("directShipState").value : "";
-                const city = document.getElementById("directShipCity") ? document.getElementById("directShipCity").value : "";
-                const pinCode = document.getElementById("directShipPin") ? document.getElementById("directShipPin").value.trim() : "";
+        if (!fullName || !phone || !street || !state || !city || !pinCode) {
+            alert("Please fill out all delivery address fields and select your State & District.");
+            return;
+        }
 
-                // Completeness Validator Gate: Block checkout if input selections are blank
-                if (!fullName || !phone || !street || !state || !city || !pinCode) {
-                    alert("Please fill out all delivery address fields and select your State & District.");
-                    return;
-                }
+        isPlacingWebsiteOrder = true;
+        const originalText = btn.textContent;
+        btn.textContent = "Placing Order...";
+        btn.disabled = true;
 
-                // 4. Identify who is purchasing (Matches active account profile username token)
-                const loggedInUser = localStorage.getItem('activeUserSession') || "Guest";
-
-                // 5. Generate metadata metrics for the transaction records logs
-                const generatedId = Math.floor(100000 + Math.random() * 900000);
-                const dateFormatted = new Date().toLocaleDateString('en-IN', {
-                    year: 'numeric', month: 'short', day: 'numeric'
-                });
-
-                // 6. Compute total price figures mathematically
-                let cumulativeTotal = 0;
-                cart.forEach(item => {
-                    cumulativeTotal += parseFloat(item.price) * parseInt(item.quantity);
-                });
-
-                // Convert items arrays to flat lines for a clean layout view on your Admin panel tables
-                const itemsStringSummary = cart.map(i => `${i.name || i.title || 'Product'} (x${i.quantity || 1})`).join(', ');
-                const completeAddressString = `${fullName}, Ph: ${phone}, ${street}, ${city}, ${state} - ${pinCode}`;
-
-                // 7. ASSEMBLE THE MASTER INSTANT INVOICE STRUCTURE Payload
-                const orderPayload = {
-                    orderId: generatedId,
-                    date: dateFormatted,
-                    totalPaid: cumulativeTotal,
-                    totalAmount: cumulativeTotal,
-                    itemsDescription: itemsStringSummary,
-                    status: "Placed",
-                    items: cart,
-                    customer: {
-                        name: fullName,
-                        accountUser: loggedInUser
-                    },
-                    shippingAddress: completeAddressString
-                };
-
-                // 8. APPEND DATA ROW TO CENTRAL STORAGE QUEUE REPOSITORIES
-                let centralQueue = JSON.parse(localStorage.getItem('storeOrdersDatabaseQueue')) || [];
-                centralQueue.unshift(orderPayload);
-                localStorage.setItem('storeOrdersDatabaseQueue', JSON.stringify(centralQueue));
-                localStorage.setItem("mujaddidi_cart", JSON.stringify(cart));
-
-                // Sync updated cart to Firebase for Mobile App
-                const activeUser = localStorage.getItem('activeUserSession');
-                if (activeUser && window.CloudDB) {
-                    CloudDB.saveCart(activeUser, cart);
-                }
-
-
-                // Save order to Firebase cloud so all devices & admin.html see it
-                await CloudDB.saveOrder(orderPayload);
-
-                // 9. FLUSH ACTIVE SHOPPING CART MEMORY CACHES COMPLETELY
-                localStorage.removeItem("mujaddidi_cart");
-
-                // Success feedback alerting notifications loop
-                alert(`🎉 Order placed successfully!\n\nYour Order ID is: #MJD-${generatedId}\nYour items have been moved to your order history.`);
-
-                // 10. Redirect your customer viewport focus over to their accounts dashboard timeline smoothly
-                window.location.href = "account.html";
+        try {
+            const loggedInUser = localStorage.getItem('activeUserSession') || "Guest";
+            const generatedId = String(Math.floor(100000 + Math.random() * 900000));
+            const dateFormatted = new Date().toLocaleDateString('en-IN', {
+                year: 'numeric', month: 'short', day: 'numeric'
             });
+
+            let cumulativeTotal = 0;
+            cart.forEach(item => {
+                cumulativeTotal += parseFloat(item.price) * parseInt(item.quantity || 1);
+            });
+
+            const itemsStringSummary = cart.map(i => `${i.name || i.title || 'Product'} (x${i.quantity || 1})`).join(', ');
+            const completeAddressString = `${fullName}, Ph: ${phone}, ${street}, ${city}, ${state} - ${pinCode}`;
+
+            const orderPayload = {
+                orderId: generatedId,
+                date: dateFormatted,
+                timestamp: Date.now(),
+                totalPaid: cumulativeTotal,
+                totalAmount: cumulativeTotal,
+                itemsDescription: itemsStringSummary,
+                status: "Placed",
+                source: "Website",
+                paymentMethod: "Cash on Delivery",
+                items: cart,
+                customer: {
+                    name: fullName,
+                    phone: phone,
+                    accountUser: loggedInUser
+                },
+                shippingAddress: completeAddressString
+            };
+
+            // Save order to Firebase so Admin & Mobile App see it immediately
+            if (window.CloudDB && typeof CloudDB.saveOrder === "function") {
+                await CloudDB.saveOrder(orderPayload);
+            } else {
+                await fetch(`${window.FIREBASE_DB_URL}/storeData/orders/${generatedId}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+            }
+
+            // Clear local & cloud cart
+            localStorage.removeItem("mujaddidi_cart");
+            if (loggedInUser !== "Guest" && window.CloudDB) {
+                await CloudDB.saveCart(loggedInUser, []);
+            }
+
+            alert(`🎉 Order placed successfully!\n\nYour Order ID is: #MJD-${generatedId}\nYour items have been moved to your order history.`);
+            window.location.href = "ACCOUNT.html";
+        } catch (err) {
+            alert("Error placing order: " + err.message);
+            btn.textContent = originalText;
+            btn.disabled = false;
+            isPlacingWebsiteOrder = false;
         }
     });
 </script>
+
 
 <script>
     // A structured list of all real districts belonging to each state
